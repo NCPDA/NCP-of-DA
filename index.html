@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pakar PAGT - Puskesmas/RS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; }
+        .card { border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .header-bg { background: #00897b; color: white; padding: 20px; border-radius: 15px 15px 0 0; }
+        #hasilDiagnosa { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container py-4">
+    <div class="card">
+        <div class="header-bg text-center">
+            <h3>Asisten Diagnosa Gizi Terstandar</h3>
+            <p>Input data assessment untuk rekomendasi kalimat PES</p>
+        </div>
+        
+        <div class="card-body">
+            <h5 class="text-primary border-bottom pb-2">1. Antropometri</h5>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label>Berat Badan (kg)</label>
+                    <input type="number" id="bb" class="form-control" placeholder="Contoh: 60">
+                </div>
+                <div class="col-6">
+                    <label>Tinggi Badan (cm)</label>
+                    <input type="number" id="tb" class="form-control" placeholder="Contoh: 165">
+                </div>
+            </div>
+
+            <h5 class="text-primary border-bottom pb-2">2. Biokimia</h5>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <label>Kadar Gula Darah / Hb (Opsional)</label>
+                    <input type="number" id="labValue" class="form-control" placeholder="Masukkan angka">
+                    <select id="labType" class="form-select mt-2">
+                        <option value="GDS">Gula Darah Sewaktu (GDS)</option>
+                        <option value="Hb">Hemoglobin (Hb)</option>
+                    </select>
+                </div>
+            </div>
+
+            <h5 class="text-primary border-bottom pb-2">3. Dietary (% Asupan)</h5>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <label>Capaian Asupan Energi (%)</label>
+                    <input type="number" id="asupanEnergi" class="form-control" placeholder="Contoh: 70">
+                </div>
+            </div>
+
+            <button onclick="prosesDiagnosa()" class="btn btn-success w-100 py-2 fs-5">Generate Diagnosa Gizi</button>
+        </div>
+    </div>
+
+    <div id="hasilDiagnosa" class="card mt-4 p-4 border-success">
+        <h4 class="text-success">Kesimpulan Diagnosa (PES):</h4>
+        <hr>
+        <div id="pesContent"></div>
+        <button class="btn btn-outline-secondary btn-sm mt-3" onclick="location.reload()">Reset Data</button>
+    </div>
+</div>
+
+<script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxRCXV7-GT5S2L2Br4KMad3dO6TolmM8pURdJxXqC_tgM_6k1lCz61wxBeECMD_efY/exec"; // PASANG URL ANDA DI SINI
+
+    async function prosesDiagnosa() {
+        const bb = parseFloat(document.getElementById('bb').value);
+        const tb = parseFloat(document.getElementById('tb').value) / 100;
+        const labVal = parseFloat(document.getElementById('labValue').value);
+        const labType = document.getElementById('labType').value;
+        const asupan = parseFloat(document.getElementById('asupanEnergi').value);
+
+        if (!bb || !tb) { alert("Mohon isi BB dan TB"); return; }
+
+        const imt = bb / (tb * tb);
+        let hasilHTML = "";
+
+        // Logika Sederhana (Ini bisa dikembangkan dengan fetch data dari Sheet)
+        // 1. Cek IMT
+        if (imt < 18.5) {
+            hasilHTML += `<p><b>(P)</b> Berat Badan Kurang berkaitan dengan <b>(E)</b> asupan energi kronis tidak cukup ditandai dengan <b>(S)</b> IMT ${imt.toFixed(1)} kg/m².</p>`;
+        } else if (imt > 25) {
+            hasilHTML += `<p><b>(P)</b> Overweight berkaitan dengan <b>(E)</b> pola makan salah ditandai dengan <b>(S)</b> IMT ${imt.toFixed(1)} kg/m².</p>`;
+        }
+
+        // 2. Cek Asupan
+        if (asupan < 80) {
+            hasilHTML += `<p><b>(P)</b> Asupan energi tidak adekuat berkaitan dengan <b>(E)</b> nafsu makan rendah ditandai dengan <b>(S)</b> asupan ${asupan}% dari kebutuhan.</p>`;
+        }
+
+        // 3. Cek Lab
+        if (labType === "GDS" && labVal > 200) {
+            hasilHTML += `<p><b>(P)</b> Perubahan nilai lab terkait gizi berkaitan dengan <b>(E)</b> gangguan metabolisme karbohidrat ditandai dengan <b>(S)</b> GDS ${labVal} mg/dL.</p>`;
+        }
+
+        document.getElementById('pesContent').innerHTML = hasilHTML || "<p>Status Gizi Normal. Tidak ada diagnosa gizi spesifik.</p>";
+        document.getElementById('hasilDiagnosa').style.display = "block";
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+</script>
+
+</body>
+</html>
