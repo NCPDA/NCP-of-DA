@@ -3,130 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NCP of DA App</title>
+    <title>NCP of DA - Nutrition Care Process</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
-        :root { --main-green: #00897b; --accent-orange: #ff9800; --soft-bg: #f1f8e9; }
-        body { background-color: var(--soft-bg); font-family: 'Sans-Serif', Arial; }
-        .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%); }
-        .btn-primary { background-color: var(--accent-orange); border: none; border-radius: 25px; padding: 12px; font-weight: bold; }
-        .btn-primary:hover { background-color: #e68a00; }
-        .app-header { background: linear-gradient(to bottom, #81c784, #4db6ac); color: white; padding: 30px 20px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
-        .card-menu { border: none; border-radius: 15px; transition: 0.3s; cursor: pointer; text-align: center; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .card-menu:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-        .step-item { border-left: 3px solid var(--accent-orange); margin-bottom: 15px; padding-left: 15px; background: white; padding: 15px; border-radius: 0 10px 10px 0; }
+        :root { --main-green: #4CAF50; --dark-green: #2E7D32; --accent-orange: #FF9800; --bg-soft: #F9FBE7; }
+        body { background-color: var(--bg-soft); font-family: 'Segoe UI', sans-serif; }
+        
+        /* LOGIN STYLE */
+        .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #DCEDC8 0%, #FFFFFF 100%); }
+        .login-card { width: 100%; max-width: 380px; padding: 30px; border-radius: 25px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .btn-login { background: linear-gradient(to right, #FF9800, #F57C00); border: none; color: white; border-radius: 30px; padding: 12px; font-weight: bold; width: 100%; margin-top: 20px; }
+        
+        /* APP STYLE */
+        .app-header { background: linear-gradient(135deg, #81C784, #4DB6AC); color: white; padding: 40px 20px; border-radius: 0 0 40px 40px; text-align: center; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: -30px; padding: 0 20px; }
+        .menu-item { background: white; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; border: none; }
+        .menu-item i { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+        .text-ncp { color: var(--dark-green); font-weight: 800; }
+        .text-da { color: var(--accent-orange); font-weight: 800; }
+        
+        .step-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; border-left: 6px solid var(--accent-orange); }
+        .btn-next { background-color: var(--dark-green); color: white; border-radius: 30px; padding: 15px; width: 100%; font-weight: bold; margin-top: 20px; border: none; }
     </style>
 </head>
 <body>
 
-<div id="loginSection" class="login-page">
-    <div class="container" style="max-width: 400px;">
-        <div class="text-center mb-4">
-            <img src="https://cdn-icons-png.flaticon.com/512/2830/2830305.png" width="80">
-            <h2 class="mt-3 fw-bold text-success">NCP <span style="color:var(--accent-orange)">of</span> DA</h2>
-            <p class="text-muted">Nutrition Care Process App</p>
-        </div>
-        <div class="card p-4 shadow-sm border-0" style="border-radius: 20px;">
-            <input type="text" id="username" class="form-control mb-3" placeholder="Username">
-            <input type="password" id="password" class="form-control mb-3" placeholder="Password">
-            <button onclick="doLogin()" class="btn btn-primary w-100 shadow">Log In</button>
+<div id="loader" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:9999; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+    <div class="spinner-border text-success mb-2"></div>
+    <p>Menghubungkan ke Database...</p>
+</div>
+
+<div id="loginPage" class="login-container">
+    <div class="login-card bg-white text-center">
+        <img src="https://i.ibb.co/LhqZ88D/logo-ncpda.png" alt="NCP of DA Logo" style="width: 120px; margin-bottom: 15px;">
+        <h3 class="text-ncp">NCP <span class="text-da">of</span> DA</h3>
+        <p class="text-muted mb-4">Nutrition Care Process App</p>
+        
+        <div class="text-start">
+            <label class="small fw-bold">Email / Username</label>
+            <input type="text" id="user" class="form-control mb-3 shadow-sm" placeholder="Masukkan username">
+            <label class="small fw-bold">Password</label>
+            <input type="password" id="pass" class="form-control mb-4 shadow-sm" placeholder="Masukkan password">
+            <button onclick="handleLogin()" class="btn-login">Log In</button>
         </div>
     </div>
 </div>
 
-<div id="dashboardSection" style="display:none;">
-    <div class="app-header text-center">
-        <h4 id="welcomeText" class="fw-bold">Helio, Dian Agnesia!</h4>
-        <p>Selamat datang di NCP of DA App</p>
+<div id="dashboardPage" style="display:none;">
+    <div class="app-header">
+        <img src="https://i.ibb.co/LhqZ88D/logo-ncpda.png" alt="Logo" style="width: 60px; filter: brightness(0) invert(1);">
+        <h2 id="userName" class="mt-3 fw-bold">Halo, Dian Agnesia!</h2>
+        <p>Ayo buat rencana gizi terbaik hari ini.</p>
     </div>
-    <div class="container mt-4">
-        <div class="row g-3">
-            <div class="col-6"><div class="card-menu bg-white" onclick="showAssessment()"><i class="bi bi-file-earmark-medical fs-1 text-success"></i><br>New Assessment</div></div>
-            <div class="col-6"><div class="card-menu bg-white"><i class="bi bi-people fs-1 text-warning"></i><br>Client Records</div></div>
-        </div>
-    </div>
-</div>
-
-<div id="assessmentSection" class="container mt-4" style="display:none; padding-bottom: 100px;">
-    <h4 class="fw-bold mb-4 text-success"><i class="bi bi-arrow-left me-2" onclick="showDashboard()"></i> New Assessment</h4>
     
-    <div class="step-item shadow-sm">
-        <h6>Step 1: Nutrition Assessment</h6>
-        <div class="row g-2 mt-2">
-            <div class="col-6"><input type="number" id="bb" class="form-control" placeholder="BB (kg)"></div>
-            <div class="col-6"><input type="number" id="tb" class="form-control" placeholder="TB (cm)"></div>
+    <div class="menu-grid">
+        <div class="menu-item" onclick="startAssessment()">
+            <i class="bi bi-plus-circle-dotted text-success"></i>
+            <span class="fw-bold">New Assessment</span>
         </div>
-        <select id="labType" class="form-select mt-2">
-            <option value="">-- Pilih Lab --</option>
-            <option value="GDS">GDS (Gula Darah)</option>
-            <option value="Hb">Hb (Hemoglobin)</option>
-        </select>
-        <input type="number" id="labVal" class="form-control mt-2" placeholder="Nilai Lab">
+        <div class="menu-item">
+            <i class="bi bi-journal-text text-warning"></i>
+            <span class="fw-bold">Client Records</span>
+        </div>
+    </div>
+</div>
+
+<div id="assessmentPage" class="container py-4" style="display:none; max-width: 500px;">
+    <div class="d-flex align-items-center mb-4" onclick="goHome()">
+        <i class="bi bi-chevron-left fs-4 me-2"></i>
+        <h4 class="mb-0 fw-bold">New Assessment</h4>
     </div>
 
-    <button onclick="prosesDiagnosa()" class="btn btn-success w-100 mt-4 rounded-pill py-3 fw-bold shadow">Next Step</button>
+    <div class="step-card shadow-sm">
+        <h6 class="text-success fw-bold mb-3"><i class="bi bi-1-circle-fill me-2"></i>Step 1: Nutrition Assessment</h6>
+        <div class="row g-2 mb-3">
+            <div class="col-6">
+                <label class="small">Berat Badan (kg)</label>
+                <input type="number" id="in_bb" class="form-control" placeholder="0">
+            </div>
+            <div class="col-6">
+                <label class="small">Tinggi Badan (cm)</label>
+                <input type="number" id="in_tb" class="form-control" placeholder="0">
+            </div>
+        </div>
+        <label class="small">Laboratorium</label>
+        <div class="input-group">
+            <select id="in_labType" class="form-select w-25">
+                <option value="GDS">GDS</option>
+                <option value="Hb">Hb</option>
+            </select>
+            <input type="number" id="in_labVal" class="form-control w-75" placeholder="Nilai">
+        </div>
+    </div>
 
-    <div id="hasilDiagnosa" class="mt-4" style="display:none;">
-        <h6 class="text-success fw-bold">Step 2: Nutrition Diagnosis (PES)</h6>
-        <div id="pesResult" class="bg-white p-3 rounded shadow-sm border-start border-4 border-warning"></div>
+    <button onclick="runAnalysis()" class="btn-next shadow">Generate Diagnosa Gizi</button>
+
+    <div id="resultArea" class="mt-4" style="display:none;">
+        <h6 class="text-success fw-bold mb-3"><i class="bi bi-check-circle-fill me-2"></i>Step 2: Diagnosis (PES)</h6>
+        <div id="pesOutput" class="p-3 bg-white rounded-4 shadow-sm"></div>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMNyrBntixfQD9z1M9Ykn8eJW4K5YrRbpax5dRhiMn7-nn4HshXvqLk0Uq1oZLBQ/exec"; // GANTI INI!
+    // PENTING: Ganti dengan URL Exec Anda
+    const API_URL = "https://script.google.com/macros/s/AKfycbx5fTBiHtEzfsRTp9zeMpzHOApbhCCESWjOKTPkhw7nif4bXY8-Oev7eemv64XvzgY/exec"; 
 
-    function doLogin() {
-        const u = document.getElementById('username').value;
-        const p = document.getElementById('password').value;
-        fetch(`${SCRIPT_URL}?action=login&user=${u}&pass=${p}`)
-        .then(res => res.json())
+    function handleLogin() {
+        const u = document.getElementById('user').value;
+        const p = document.getElementById('pass').value;
+        const loader = document.getElementById('loader');
+        
+        loader.style.display = "flex";
+        fetch(`${API_URL}?action=login&user=${u}&pass=${p}`)
+        .then(r => r.json())
         .then(res => {
+            loader.style.display = "none";
             if(res.status === "success") {
-                document.getElementById('loginSection').style.display = "none";
-                document.getElementById('dashboardSection').style.display = "block";
-                document.getElementById('welcomeText').innerText = `Helio, ${res.data.name}!`;
+                document.getElementById('loginPage').style.display = "none";
+                document.getElementById('dashboardPage').style.display = "block";
+                document.getElementById('userName').innerText = `Helio, ${res.data.name}!`;
             } else { alert(res.message); }
+        }).catch(err => {
+            loader.style.display = "none";
+            alert("Koneksi gagal! Pastikan URL Script benar.");
         });
     }
 
-    function showAssessment() {
-        document.getElementById('dashboardSection').style.display = "none";
-        document.getElementById('assessmentSection').style.display = "block";
+    function startAssessment() {
+        document.getElementById('dashboardPage').style.display = "none";
+        document.getElementById('assessmentPage').style.display = "block";
     }
 
-    function showDashboard() {
-        document.getElementById('assessmentSection').style.display = "none";
-        document.getElementById('dashboardSection').style.display = "block";
+    function goHome() {
+        document.getElementById('assessmentPage').style.display = "none";
+        document.getElementById('dashboardPage').style.display = "block";
     }
 
-    async function prosesDiagnosa() {
-        const bb = parseFloat(document.getElementById('bb').value);
-        const tb = parseFloat(document.getElementById('tb').value)/100;
-        const imt = bb/(tb*tb);
-        const labType = document.getElementById('labType').value;
-        const labVal = parseFloat(document.getElementById('labVal').value);
+    async function runAnalysis() {
+        document.getElementById('loader').style.display = "flex";
+        
+        try {
+            const bb = parseFloat(document.getElementById('in_bb').value);
+            const tb = parseFloat(document.getElementById('in_tb').value) / 100;
+            const imt = bb / (tb * tb);
+            const labType = document.getElementById('in_labType').value;
+            const labVal = parseFloat(document.getElementById('in_labVal').value);
 
-        // Ambil data dari API
-        const db = await fetch(SCRIPT_URL).then(r => r.json());
-        let saran = "";
+            const db = await fetch(API_URL).then(r => r.json());
+            let diagnosaHTML = "";
 
-        if(imt < 18.5) {
-            const d = db.master_diagnosa_pes.find(m => m.Kode === "NC-3.1");
-            saran += `<p><b>${d.Kode}:</b> ${d['Problem (P)']} berkaitan dengan ${d['Etiologi (E)']} ditandai dengan IMT ${imt.toFixed(1)}</p>`;
-        } else if(imt > 25) {
-            const d = db.master_diagnosa_pes.find(m => m.Kode === "NC-3.3");
-            saran += `<p><b>${d.Kode}:</b> ${d['Problem (P)']} berkaitan dengan ${d['Etiologi (E)']} ditandai dengan IMT ${imt.toFixed(1)}</p>`;
+            // Logika Antropometri
+            if(imt < 18.5) {
+                const p = db.master_diagnosa_pes.find(m => m.Kode === "NC-3.1");
+                diagnosaHTML += `<div class='mb-3'><strong>(P) ${p['Problem (P)']}</strong><br><small>Berkaitan dengan ${p['Etiologi (E)']} ditandai dengan IMT ${imt.toFixed(1)}</small></div>`;
+            } else if(imt > 25) {
+                const p = db.master_diagnosa_pes.find(m => m.Kode === "NC-3.3");
+                diagnosaHTML += `<div class='mb-3'><strong>(P) ${p['Problem (P)']}</strong><br><small>Berkaitan dengan ${p['Etiologi (E)']} ditandai dengan IMT ${imt.toFixed(1)}</small></div>`;
+            }
+
+            // Logika Lab
+            if(labType === "GDS" && labVal > 200) {
+                const p = db.master_diagnosa_pes.find(m => m.Kode === "NC-2.2");
+                diagnosaHTML += `<div class='mb-3'><strong>(P) ${p['Problem (P)']}</strong><br><small>Ditandai dengan GDS ${labVal} mg/dL</small></div>`;
+            }
+
+            document.getElementById('pesOutput').innerHTML = diagnosaHTML || "Pasien dalam batas normal.";
+            document.getElementById('resultArea').style.display = "block";
+        } catch (e) {
+            alert("Gagal memproses data.");
+        } finally {
+            document.getElementById('loader').style.display = "none";
         }
-
-        if(labType === "GDS" && labVal > 200) {
-            const d = db.master_diagnosa_pes.find(m => m.Kode === "NC-2.2");
-            saran += `<p><b>${d.Kode}:</b> ${d['Problem (P)']} ditandai GDS ${labVal}</p>`;
-        }
-
-        document.getElementById('pesResult').innerHTML = saran || "Kondisi Normal";
-        document.getElementById('hasilDiagnosa').style.display = "block";
     }
+    
+    // Sembunyikan loader awal
+    window.onload = () => document.getElementById('loader').style.display = "none";
 </script>
+
 </body>
 </html>
