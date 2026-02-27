@@ -1,37 +1,163 @@
-<div class="step-card">
-    <h6 class="fw-bold text-teal mb-3">D. Fisik & Klinis</h6>
-    <div id="listFisik" class="row px-2">
-        <p class="small text-muted">Memuat data gejala...</p>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCP of DA - Expert System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root { --teal: #00897b; --orange: #ff9800; }
+        body { background: #f4f7f6; font-family: sans-serif; }
+        .wizard-card { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: none; }
+        .active { display: block; }
+        .btn-ncp { background: var(--orange); color: white; border-radius: 30px; font-weight: bold; border: none; padding: 10px 25px; }
+        .header-ncp { background: var(--teal); color: white; padding: 30px; text-align: center; border-radius: 0 0 30px 30px; margin-bottom: 20px; }
+        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
+    </style>
+</head>
+<body>
+
+<div id="loader"><div class="spinner-border text-success"></div><p class="mt-2 fw-bold">Sedang Memproses...</p></div>
+
+<div id="stepLogin" class="container mt-5 wizard-card active" style="max-width: 400px; text-align: center;">
+    <img src="logo_NCPDA.png" width="150" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2830/2830305.png'">
+    <h4 class="fw-bold mt-3">NCP of DA</h4>
+    <div class="text-start mt-4">
+        <input type="text" id="user" class="form-control mb-3 rounded-pill" placeholder="Username">
+        <input type="password" id="pass" class="form-control mb-4 rounded-pill" placeholder="Password">
+        <button onclick="doLogin()" class="btn btn-ncp w-100 shadow">LOG IN</button>
     </div>
 </div>
 
+<div id="stepPasien" class="container mt-4 wizard-card" style="max-width: 600px;">
+    <h5 class="fw-bold text-teal mb-4">Langkah 1: Identitas Pasien</h5>
+    <div class="mb-3"><label class="small fw-bold">Nama Lengkap</label><input type="text" id="namaP" class="form-control"></div>
+    <div class="row mb-3">
+        <div class="col-6"><label class="small fw-bold">Tgl Lahir</label><input type="date" id="tglP" class="form-control"></div>
+        <div class="col-6"><label class="small fw-bold">Jenis Kelamin</label>
+            <select id="jkP" class="form-select"><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select>
+        </div>
+    </div>
+    <div class="mb-4"><label class="small fw-bold">Diagnosa Medis</label><textarea id="diagP" class="form-control" rows="2"></textarea></div>
+    <button onclick="savePasien()" class="btn btn-ncp w-100">SIMPAN & LANJUT ASSESSMENT</button>
+</div>
+
+<div id="stepAssess" class="container mt-4 wizard-card" style="max-width: 700px;">
+    <div class="alert alert-info py-2 small">
+        <strong>Pasien:</strong> <span id="infoNama"></span> | <strong>JK:</strong> <span id="infoJK"></span> | <strong>Diagnosa:</strong> <span id="infoDiag"></span>
+    </div>
+    <h5 class="fw-bold text-teal mb-3">Langkah 2: Nutrition Assessment</h5>
+    <div class="card p-3 mb-3 border-0 shadow-sm">
+        <h6 class="fw-bold small text-muted">Antropometri & Dietary</h6>
+        <div class="row g-2 mb-3">
+            <div class="col-6"><input type="number" id="inBB" class="form-control" placeholder="BB (kg)"></div>
+            <div class="col-6"><input type="number" id="inTB" class="form-control" placeholder="TB (cm)"></div>
+        </div>
+        <label class="small fw-bold">Asupan Energi (%)</label>
+        <input type="range" id="inAsup" class="form-range" min="0" max="150" value="100" oninput="this.nextElementSibling.value=this.value">
+        <output class="fw-bold text-success">100</output>%
+    </div>
+
+    <div class="card p-3 mb-4 border-0 shadow-sm">
+        <h6 class="fw-bold small text-muted">Fisik & Klinis</h6>
+        <div id="listFisik" class="row"></div>
+    </div>
+    <button onclick="prosesPES()" class="btn btn-success w-100 rounded-pill fw-bold py-3 shadow">GENERASI DIAGNOSA (PES)</button>
+</div>
+
+<div id="stepHasil" class="container mt-4 wizard-card" style="max-width: 700px;">
+    <div id="cetakArea" class="p-4 border rounded bg-white">
+        <center><h4 class="fw-bold mb-4">HASIL ASUHAN GIZI</h4></center>
+        <div id="hasilPasien" class="mb-4"></div>
+        <div id="hasilPES"></div>
+    </div>
+    <button onclick="location.reload()" class="btn btn-secondary mt-3 w-100 rounded-pill">Input Pasien Baru</button>
+</div>
+
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwsa7eJo33q9AN7CDnTuJAuhCA1suexFlgXL6ApFjhgl9HZ-kcnTcAI0J4ouYyg2-k/exec"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwN3WgmgRb9YD8CmAe18uvBu_APMF7XPP1JOfS3LkjpgqvEr-wXKiwCAlYpFbAQzGk/exec"; 
+    let DB = null;
 
-    // Perbaikan fungsi muat data agar tidak 'undefined'
-    async function loadMasterData() {
-        try {
-            const res = await fetch(SCRIPT_URL);
-            const masterData = await res.json();
-            window.ncpData = masterData; // Simpan ke variabel global
-
-            let htmlFisik = "";
-            // Perhatikan penggunaan 'item.gejala' (huruf kecil semua sesuai image_accb1f.jpg)
-            masterData.logika_fisik_klinis.forEach((item, index) => {
-                if (item.gejala) { 
-                    htmlFisik += `
-                        <div class="form-check col-6 mb-2">
-                            <input class="form-check-input check-fisik" type="checkbox" value="${item.gejala}" id="f${index}">
-                            <label class="form-check-label small" for="f${index}">${item.gejala}</label>
-                        </div>`;
-                }
-            });
-            document.getElementById('listFisik').innerHTML = htmlFisik || "<p class='small text-danger'>Data gejala kosong di spreadsheet.</p>";
-        } catch(e) {
-            document.getElementById('listFisik').innerHTML = "<p class='small text-danger'>Gagal koneksi database.</p>";
-        }
+    function show(id) {
+        document.querySelectorAll('.wizard-card').forEach(c => c.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        window.scrollTo(0,0);
     }
 
-    // Panggil loadMasterData setelah login berhasil
-    // (Tambahkan di bagian fungsi penanganan login yang sudah ada)
+    async function doLogin() {
+        const u = document.getElementById('user').value, p = document.getElementById('pass').value;
+        if(!u || !p) return alert("Isi Login!");
+        toggleLoad(true);
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=login&user=${u}&pass=${p}`).then(r => r.json());
+            if(res.status === "success") {
+                DB = await fetch(SCRIPT_URL).then(r => r.json());
+                loadFisikCheckboxes();
+                show('stepPasien');
+            } else { alert("Login Salah!"); }
+        } catch(e) { alert("Error Koneksi!"); }
+        toggleLoad(false);
+    }
+
+    function loadFisikCheckboxes() {
+        let html = "";
+        // FIX: Menggunakan item.gejala (huruf kecil) agar tidak undefined
+        DB.logika_fisik_klinis.forEach((item, i) => {
+            if(item.gejala) {
+                html += `<div class="col-6 mb-2 small"><div class="form-check">
+                    <input class="form-check-input chk-fisik" type="checkbox" value="${item.gejala}" id="f${i}">
+                    <label class="form-check-label" for="f${i}">${item.gejala}</label>
+                </div></div>`;
+            }
+        });
+        document.getElementById('listFisik').innerHTML = html;
+    }
+
+    async function savePasien() {
+        const nama = document.getElementById('namaP').value, diag = document.getElementById('diagP').value;
+        if(!nama || !diag) return alert("Lengkapi data pasien!");
+        toggleLoad(true);
+        await fetch(`${SCRIPT_URL}?action=simpanPasien&nama=${encodeURIComponent(nama)}&tgl=${document.getElementById('tglP').value}&jk=${document.getElementById('jkP').value}&diag=${encodeURIComponent(diag)}`);
+        document.getElementById('infoNama').innerText = nama;
+        document.getElementById('infoJK').innerText = document.getElementById('jkP').value;
+        document.getElementById('infoDiag').innerText = diag;
+        toggleLoad(false);
+        show('stepAssess');
+    }
+
+    function prosesPES() {
+        const bb = parseFloat(document.getElementById('inBB').value), tb = parseFloat(document.getElementById('inTB').value)/100;
+        const imt = bb / (tb * tb), asup = parseFloat(document.getElementById('inAsup').value);
+        const terpilih = Array.from(document.querySelectorAll('.chk-fisik:checked')).map(c => c.value);
+        
+        let codes = [];
+        if(imt < 18.5) codes.push("NC-3.1");
+        if(asup < 80) codes.push("NI-1.2");
+        terpilih.forEach(g => {
+            const m = DB.logika_fisik_klinis.find(x => x.gejala === g);
+            if(m) codes.push(m.kode_diagnosa);
+        });
+
+        let resHtml = "";
+        [...new Set(codes)].forEach(k => {
+            const p = DB.master_diagnosa_pes.find(x => x.Kode === k);
+            if(p) resHtml += `<div class="p-3 border-start border-4 border-success bg-light mb-3">
+                <h6 class="fw-bold text-success">${p.Kode}: ${p['Problem (P)']}</h6>
+                <p class="small mb-1"><strong>E:</strong> ${p['Etiologi (E)']}</p>
+                <p class="small mb-0"><strong>S:</strong> ${p['Signs_Symptoms (S)']}</p>
+            </div>`;
+        });
+
+        document.getElementById('hasilPasien').innerHTML = `
+            <table class="table table-sm small">
+                <tr><td>Nama</td><td>: ${document.getElementById('namaP').value}</td></tr>
+                <tr><td>Status Gizi</td><td>: IMT ${imt.toFixed(1)}</td></tr>
+            </table>`;
+        document.getElementById('hasilPES').innerHTML = resHtml || "Tidak ditemukan diagnosa gizi.";
+        show('stepHasil');
+    }
+
+    function toggleLoad(s) { document.getElementById('loader').style.display = s?'flex':'none'; }
 </script>
+</body>
+</html>
