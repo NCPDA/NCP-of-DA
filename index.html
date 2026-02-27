@@ -3,107 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Pakar PAGT - Puskesmas/RS</title>
+    <title>Sistem Pakar PAGT - Terintegrasi Sheets</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f4f7f6; }
-        .card { border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .header-bg { background: #00897b; color: white; padding: 20px; border-radius: 15px 15px 0 0; }
-        #hasilDiagnosa { display: none; }
+        body { background-color: #f0f4f8; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card { border-radius: 15px; border: none; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .header-bg { background: linear-gradient(135deg, #00796b, #004d40); color: white; padding: 30px; border-radius: 15px 15px 0 0; }
+        .section-title { background: #e0f2f1; padding: 8px 15px; border-radius: 8px; font-weight: bold; color: #00695c; margin-top: 25px; border-left: 5px solid #00695c; }
+        .btn-analyze { background-color: #00897b; border: none; transition: 0.3s; }
+        .btn-analyze:hover { background-color: #004d40; transform: translateY(-2px); }
+        #loading { display: none; }
     </style>
 </head>
 <body>
 
-<div class="container py-4">
+<div class="container py-5">
     <div class="card">
         <div class="header-bg text-center">
-            <h3>Asisten Diagnosa Gizi Terstandar</h3>
-            <p>Input data assessment untuk rekomendasi kalimat PES</p>
+            <h1>Expert System PAGT</h1>
+            <p>Automated Nutrition Care Process Diagnosa</p>
         </div>
         
-        <div class="card-body">
-            <h5 class="text-primary border-bottom pb-2">1. Antropometri</h5>
-            <div class="row mb-3">
-                <div class="col-6">
-                    <label>Berat Badan (kg)</label>
-                    <input type="number" id="bb" class="form-control" placeholder="Contoh: 60">
-                </div>
-                <div class="col-6">
-                    <label>Tinggi Badan (cm)</label>
-                    <input type="number" id="tb" class="form-control" placeholder="Contoh: 165">
-                </div>
+        <div class="card-body p-4">
+            <div id="loading" class="text-center text-primary mb-3">Memuat database dari Google Sheets...</div>
+
+            <div class="section-title">A. ANTROPOMETRI</div>
+            <div class="row g-3 mt-1">
+                <div class="col-md-6"><label>Berat Badan (kg)</label><input type="number" id="bb" class="form-control"></div>
+                <div class="col-md-6"><label>Tinggi Badan (cm)</label><input type="number" id="tb" class="form-control"></div>
             </div>
 
-            <h5 class="text-primary border-bottom pb-2">2. Biokimia</h5>
-            <div class="row mb-3">
-                <div class="col-12">
-                    <label>Kadar Gula Darah / Hb (Opsional)</label>
-                    <input type="number" id="labValue" class="form-control" placeholder="Masukkan angka">
-                    <select id="labType" class="form-select mt-2">
-                        <option value="GDS">Gula Darah Sewaktu (GDS)</option>
-                        <option value="Hb">Hemoglobin (Hb)</option>
+            <div class="section-title">B. BIOKIMIA</div>
+            <div class="row g-3 mt-1">
+                <div class="col-md-8">
+                    <label>Parameter Lab</label>
+                    <select id="labType" class="form-select">
+                        <option value="">-- Pilih --</option>
+                        <option value="GDS">GDS (Gula Darah Sewaktu)</option>
+                        <option value="Hb">Hb (Hemoglobin)</option>
+                        <option value="Albumin">Albumin</option>
                     </select>
                 </div>
+                <div class="col-md-4"><label>Nilai</label><input type="number" id="labVal" class="form-control"></div>
             </div>
 
-            <h5 class="text-primary border-bottom pb-2">3. Dietary (% Asupan)</h5>
-            <div class="row mb-3">
-                <div class="col-12">
-                    <label>Capaian Asupan Energi (%)</label>
-                    <input type="number" id="asupanEnergi" class="form-control" placeholder="Contoh: 70">
-                </div>
+            <div class="section-title">C. DIETARY (Asupan)</div>
+            <div class="mt-3">
+                <label>Asupan Energi (%)</label>
+                <input type="range" id="asupan" class="form-range" min="0" max="150" value="100" oninput="this.nextElementSibling.value = this.value">
+                <output class="fw-bold text-success">100</output><span class="fw-bold text-success">%</span>
             </div>
 
-            <button onclick="prosesDiagnosa()" class="btn btn-success w-100 py-2 fs-5">Generate Diagnosa Gizi</button>
+            <div class="section-title">D. FISIK & KLINIS</div>
+            <div class="row mt-3 px-3">
+                <div class="form-check col-md-6"><input class="form-check-input fisik" type="checkbox" value="Oedema" id="f1"><label class="form-check-label" for="f1">Oedema</label></div>
+                <div class="form-check col-md-6"><input class="form-check-input fisik" type="checkbox" value="Mual/Muntah" id="f2"><label class="form-check-label" for="f2">Mual/Muntah</label></div>
+                <div class="form-check col-md-6"><input class="form-check-input fisik" type="checkbox" value="Ascites" id="f3"><label class="form-check-label" for="f3">Ascites</label></div>
+                <div class="form-check col-md-6"><input class="form-check-input fisik" type="checkbox" value="Konjungtiva Pucat" id="f4"><label class="form-check-label" for="f4">Konjungtiva Pucat</label></div>
+            </div>
+
+            <button onclick="prosesDiagnosa()" class="btn btn-analyze btn-lg w-100 mt-5 text-white shadow">Proses Diagnosa Gizi</button>
         </div>
     </div>
 
-    <div id="hasilDiagnosa" class="card mt-4 p-4 border-success">
-        <h4 class="text-success">Kesimpulan Diagnosa (PES):</h4>
-        <hr>
+    <div id="hasilBox" class="card mt-4 p-4 border-start border-5 border-success" style="display:none;">
+        <h3 class="text-success mb-3">📋 Kesimpulan PES</h3>
         <div id="pesContent"></div>
-        <button class="btn btn-outline-secondary btn-sm mt-3" onclick="location.reload()">Reset Data</button>
     </div>
 </div>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxRCXV7-GT5S2L2Br4KMad3dO6TolmM8pURdJxXqC_tgM_6k1lCz61wxBeECMD_efY/exec"; // PASANG URL ANDA DI SINI
+    // GANTI DENGAN URL WEB APP GOOGLE SCRIPT ANDA
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxRCXV7-GT5S2L2Br4KMad3dO6TolmM8pURdJxXqC_tgM_6k1lCz61wxBeECMD_efY/exec"; 
 
     async function prosesDiagnosa() {
-        const bb = parseFloat(document.getElementById('bb').value);
-        const tb = parseFloat(document.getElementById('tb').value) / 100;
-        const labVal = parseFloat(document.getElementById('labValue').value);
-        const labType = document.getElementById('labType').value;
-        const asupan = parseFloat(document.getElementById('asupanEnergi').value);
+        document.getElementById('loading').style.display = "block";
+        
+        try {
+            // 1. Ambil Data dari Google Sheets via API
+            const response = await fetch(SCRIPT_URL);
+            const db = await response.json();
+            
+            // 2. Ambil Input User
+            const bb = parseFloat(document.getElementById('bb').value);
+            const tb = parseFloat(document.getElementById('tb').value) / 100;
+            const imt = bb / (tb * tb);
+            const labType = document.getElementById('labType').value;
+            const labVal = parseFloat(document.getElementById('labVal').value);
+            const asupan = parseFloat(document.getElementById('asupan').value);
+            const fisik = Array.from(document.querySelectorAll('.fisik:checked')).map(c => c.value);
 
-        if (!bb || !tb) { alert("Mohon isi BB dan TB"); return; }
+            let saranKode = [];
 
-        const imt = bb / (tb * tb);
-        let hasilHTML = "";
+            // 3. Logika Pencocokan (Expert System)
+            // Cek Antropometri
+            db.ref_antropometri.forEach(r => {
+                if (imt >= r.Ambang_Bawah && imt <= r.Ambang_Atas) saranKode.push(r.Kode_Diagnosa);
+            });
 
-        // Logika Sederhana (Ini bisa dikembangkan dengan fetch data dari Sheet)
-        // 1. Cek IMT
-        if (imt < 18.5) {
-            hasilHTML += `<p><b>(P)</b> Berat Badan Kurang berkaitan dengan <b>(E)</b> asupan energi kronis tidak cukup ditandai dengan <b>(S)</b> IMT ${imt.toFixed(1)} kg/m².</p>`;
-        } else if (imt > 25) {
-            hasilHTML += `<p><b>(P)</b> Overweight berkaitan dengan <b>(E)</b> pola makan salah ditandai dengan <b>(S)</b> IMT ${imt.toFixed(1)} kg/m².</p>`;
+            // Cek Lab
+            db.ref_biokimia.forEach(r => {
+                if (labType === r.Parameter) {
+                    if (r.Kondisi === "Tinggi" && labVal > r.Ambang_Batas) saranKode.push(r.Kode_Diagnosa);
+                    if (r.Kondisi === "Rendah" && labVal < r.Ambang_Batas) saranKode.push(r.Kode_Diagnosa);
+                }
+            });
+
+            // Cek Dietary
+            db.ref_dietary.forEach(r => {
+                if (asupan < r["Ambang_Bawah (%)"]) saranKode.push(r.Kode_Diagnosa);
+                if (asupan > r["Ambang_Atas (%)"]) saranKode.push(r.Kode_Diagnosa);
+            });
+
+            // Cek Fisik
+            fisik.forEach(f => {
+                const found = db.ref_fisik_klinis.find(r => r.Gejala === f);
+                if (found) saranKode.push(found.Kode_Diagnosa);
+            });
+
+            // 4. Ambil Kalimat PES (Unique Only)
+            let uniqueCodes = [...new Set(saranKode)].filter(c => c !== "-");
+            let finalHTML = "";
+
+            uniqueCodes.forEach(kode => {
+                const pes = db.master_diagnosa_pes.find(m => m.Kode === kode);
+                if (pes) {
+                    finalHTML += `
+                        <div class='mb-3 p-3 bg-light rounded border-start border-4 border-primary'>
+                            <strong>[${pes.Kode}] ${pes['Problem (P)']}</strong><br>
+                            <small class='text-muted'>Etiologi: ${pes['Etiologi (E)']}</small><br>
+                            <small class='text-muted'>Signs/Symptoms: ${pes['Signs_Symptoms (S)']}</small>
+                        </div>`;
+                }
+            });
+
+            document.getElementById('pesContent').innerHTML = finalHTML || "Pasien dalam kondisi normal.";
+            document.getElementById('hasilBox').style.display = "block";
+            
+        } catch (error) {
+            alert("Gagal mengambil data. Pastikan URL Script benar dan sudah di-Deploy sebagai 'Anyone'.");
+        } finally {
+            document.getElementById('loading').style.display = "none";
         }
-
-        // 2. Cek Asupan
-        if (asupan < 80) {
-            hasilHTML += `<p><b>(P)</b> Asupan energi tidak adekuat berkaitan dengan <b>(E)</b> nafsu makan rendah ditandai dengan <b>(S)</b> asupan ${asupan}% dari kebutuhan.</p>`;
-        }
-
-        // 3. Cek Lab
-        if (labType === "GDS" && labVal > 200) {
-            hasilHTML += `<p><b>(P)</b> Perubahan nilai lab terkait gizi berkaitan dengan <b>(E)</b> gangguan metabolisme karbohidrat ditandai dengan <b>(S)</b> GDS ${labVal} mg/dL.</p>`;
-        }
-
-        document.getElementById('pesContent').innerHTML = hasilHTML || "<p>Status Gizi Normal. Tidak ada diagnosa gizi spesifik.</p>";
-        document.getElementById('hasilDiagnosa').style.display = "block";
-        window.scrollTo(0, document.body.scrollHeight);
     }
 </script>
-
 </body>
 </html>
