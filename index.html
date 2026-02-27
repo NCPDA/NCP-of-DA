@@ -3,183 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NCP of DA - Nutrition Care Process</title>
+    <title>NCP of DA - Full Assessment</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
-        :root { --main-green: #4CAF50; --dark-green: #2E7D32; --accent-orange: #FF9800; --bg-soft: #F9FBE7; }
+        :root { --main-green: #4CAF50; --accent-orange: #FF9800; --bg-soft: #F1F8E9; }
         body { background-color: var(--bg-soft); font-family: 'Segoe UI', sans-serif; }
-        
-        /* LOGIN STYLE */
-        .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #DCEDC8 0%, #FFFFFF 100%); }
-        .login-card { width: 100%; max-width: 380px; padding: 30px; border-radius: 25px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-        .btn-login { background: linear-gradient(to right, #FF9800, #F57C00); border: none; color: white; border-radius: 30px; padding: 12px; font-weight: bold; width: 100%; margin-top: 20px; }
-        
-        /* APP STYLE */
-        .app-header { background: linear-gradient(135deg, #81C784, #4DB6AC); color: white; padding: 40px 20px; border-radius: 0 0 40px 40px; text-align: center; }
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: -30px; padding: 0 20px; }
-        .menu-item { background: white; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; border: none; }
-        .menu-item i { font-size: 2.5rem; display: block; margin-bottom: 10px; }
-        .text-ncp { color: var(--dark-green); font-weight: 800; }
-        .text-da { color: var(--accent-orange); font-weight: 800; }
-        
-        .step-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; border-left: 6px solid var(--accent-orange); }
-        .btn-next { background-color: var(--dark-green); color: white; border-radius: 30px; padding: 15px; width: 100%; font-weight: bold; margin-top: 20px; border: none; }
+        .app-header { background: linear-gradient(135deg, #81C784, #4DB6AC); color: white; padding: 30px; border-radius: 0 0 30px 30px; }
+        .step-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--accent-orange); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .section-title { font-weight: bold; color: var(--main-green); margin-bottom: 15px; display: flex; align-items: center; }
+        .btn-process { background-color: #2E7D32; color: white; border-radius: 30px; padding: 15px; width: 100%; font-weight: bold; border: none; }
+        .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: white; }
     </style>
 </head>
 <body>
 
-<div id="loader" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:9999; display:flex; align-items:center; justify-content:center; flex-direction:column;">
-    <div class="spinner-border text-success mb-2"></div>
-    <p>Menghubungkan ke Database...</p>
-</div>
-
-<div id="loginPage" class="login-container">
-    <div class="login-card bg-white text-center">
-        <img src="https://i.ibb.co/LhqZ88D/logo-ncpda.png" alt="NCP of DA Logo" style="width: 120px; margin-bottom: 15px;">
-        <h3 class="text-ncp">NCP <span class="text-da">of</span> DA</h3>
-        <p class="text-muted mb-4">Nutrition Care Process App</p>
-        
-        <div class="text-start">
-            <label class="small fw-bold">Email / Username</label>
-            <input type="text" id="user" class="form-control mb-3 shadow-sm" placeholder="Masukkan username">
-            <label class="small fw-bold">Password</label>
-            <input type="password" id="pass" class="form-control mb-4 shadow-sm" placeholder="Masukkan password">
-            <button onclick="handleLogin()" class="btn-login">Log In</button>
+<div id="loginPage" class="login-screen">
+    <div class="text-center p-4" style="max-width: 400px; width: 100%;">
+        <img src="https://i.ibb.co/LhqZ88D/logo-ncpda.png" width="120" class="mb-3">
+        <h2 class="fw-bold text-success">NCP <span style="color:var(--accent-orange)">of</span> DA</h2>
+        <div class="mt-4 shadow-sm p-4 rounded-4 bg-light">
+            <input type="text" id="user" class="form-control mb-3" placeholder="Username">
+            <input type="password" id="pass" class="form-control mb-3" placeholder="Password">
+            <button onclick="handleLogin()" class="btn btn-warning w-100 rounded-pill fw-bold text-white">LOG IN</button>
         </div>
     </div>
 </div>
 
 <div id="dashboardPage" style="display:none;">
-    <div class="app-header">
-        <img src="https://i.ibb.co/LhqZ88D/logo-ncpda.png" alt="Logo" style="width: 60px; filter: brightness(0) invert(1);">
-        <h2 id="userName" class="mt-3 fw-bold">Halo, Dian Agnesia!</h2>
-        <p>Ayo buat rencana gizi terbaik hari ini.</p>
+    <div class="app-header text-center">
+        <h4 id="welcomeName" class="fw-bold">Halo, Ahli Gizi!</h4>
+        <p>Proses Asuhan Gizi Terstandar</p>
     </div>
-    
-    <div class="menu-grid">
-        <div class="menu-item" onclick="startAssessment()">
-            <i class="bi bi-plus-circle-dotted text-success"></i>
-            <span class="fw-bold">New Assessment</span>
-        </div>
-        <div class="menu-item">
-            <i class="bi bi-journal-text text-warning"></i>
-            <span class="fw-bold">Client Records</span>
+    <div class="container mt-4 text-center">
+        <div class="row g-3 px-3">
+            <div class="col-6">
+                <div class="bg-white p-4 rounded-4 shadow-sm" onclick="startNCP()">
+                    <i class="bi bi-file-earmark-plus fs-1 text-success"></i><br><span class="small fw-bold">New Assessment</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="bg-white p-4 rounded-4 shadow-sm">
+                    <i class="bi bi-folder2-open fs-1 text-warning"></i><br><span class="small fw-bold">Records</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<div id="assessmentPage" class="container py-4" style="display:none; max-width: 500px;">
+<div id="assessmentPage" class="container py-4" style="display:none; max-width: 600px;">
     <div class="d-flex align-items-center mb-4" onclick="goHome()">
-        <i class="bi bi-chevron-left fs-4 me-2"></i>
-        <h4 class="mb-0 fw-bold">New Assessment</h4>
+        <i class="bi bi-arrow-left fs-3 me-3 text-success"></i>
+        <h4 class="mb-0 fw-bold">Step 1: Nutrition Assessment</h4>
     </div>
 
-    <div class="step-card shadow-sm">
-        <h6 class="text-success fw-bold mb-3"><i class="bi bi-1-circle-fill me-2"></i>Step 1: Nutrition Assessment</h6>
-        <div class="row g-2 mb-3">
-            <div class="col-6">
-                <label class="small">Berat Badan (kg)</label>
-                <input type="number" id="in_bb" class="form-control" placeholder="0">
-            </div>
-            <div class="col-6">
-                <label class="small">Tinggi Badan (cm)</label>
-                <input type="number" id="in_tb" class="form-control" placeholder="0">
-            </div>
-        </div>
-        <label class="small">Laboratorium</label>
-        <div class="input-group">
-            <select id="in_labType" class="form-select w-25">
-                <option value="GDS">GDS</option>
-                <option value="Hb">Hb</option>
-            </select>
-            <input type="number" id="in_labVal" class="form-control w-75" placeholder="Nilai">
+    <div class="step-card">
+        <div class="section-title"><i class="bi bi-rulers me-2"></i> A. Antropometri</div>
+        <div class="row g-2">
+            <div class="col-6"><label class="small">BB (kg)</label><input type="number" id="in_bb" class="form-control"></div>
+            <div class="col-6"><label class="small">TB (cm)</label><input type="number" id="in_tb" class="form-control"></div>
         </div>
     </div>
 
-    <button onclick="runAnalysis()" class="btn-next shadow">Generate Diagnosa Gizi</button>
+    <div class="step-card">
+        <div class="section-title"><i class="bi bi-droplet-half me-2"></i> B. Biokimia</div>
+        <div class="row g-2">
+            <div class="col-7">
+                <select id="in_labType" class="form-select">
+                    <option value="">Pilih Parameter</option>
+                    <option value="GDS">GDS (mg/dL)</option>
+                    <option value="Hb">Hb (g/dL)</option>
+                    <option value="Albumin">Albumin (g/dL)</option>
+                </select>
+            </div>
+            <div class="col-5"><input type="number" id="in_labVal" class="form-control" placeholder="Nilai"></div>
+        </div>
+    </div>
+
+    <div class="step-card">
+        <div class="section-title"><i class="bi bi-egg-fried me-2"></i> C. Dietary</div>
+        <label class="small">Persentase Asupan Energi (%)</label>
+        <input type="range" id="in_asupan" class="form-range" min="0" max="150" value="100" oninput="this.nextElementSibling.value = this.value">
+        <output class="fw-bold text-success">100</output>%
+    </div>
+
+    <div class="step-card">
+        <div class="section-title"><i class="bi bi-person-heart me-2"></i> D. Fisik & Klinis</div>
+        <div class="row">
+            <div class="col-6">
+                <div class="form-check"><input class="form-check-input fisik" type="checkbox" value="Oedema" id="f1"><label class="form-check-label small" for="f1">Oedema</label></div>
+                <div class="form-check"><input class="form-check-input fisik" type="checkbox" value="Ascites" id="f2"><label class="form-check-label small" for="f2">Ascites</label></div>
+            </div>
+            <div class="col-6">
+                <div class="form-check"><input class="form-check-input fisik" type="checkbox" value="Mual/Muntah" id="f3"><label class="form-check-label small" for="f3">Mual/Muntah</label></div>
+                <div class="form-check"><input class="form-check-input fisik" type="checkbox" value="Konjungtiva Pucat" id="f4"><label class="form-check-label small" for="f4">Mata Pucat</label></div>
+            </div>
+        </div>
+    </div>
+
+    <button onclick="runExpertSystem()" class="btn-process shadow mt-3">PROSES DIAGNOSA (PES)</button>
 
     <div id="resultArea" class="mt-4" style="display:none;">
-        <h6 class="text-success fw-bold mb-3"><i class="bi bi-check-circle-fill me-2"></i>Step 2: Diagnosis (PES)</h6>
-        <div id="pesOutput" class="p-3 bg-white rounded-4 shadow-sm"></div>
+        <h5 class="fw-bold text-success mb-3">Step 2: Nutrition Diagnosis</h5>
+        <div id="pesContent" class="bg-white p-3 rounded-4 shadow-sm"></div>
     </div>
 </div>
 
 <script>
-    // PENTING: Ganti dengan URL Exec Anda
-    const API_URL = "https://script.google.com/macros/s/AKfycbx5fTBiHtEzfsRTp9zeMpzHOApbhCCESWjOKTPkhw7nif4bXY8-Oev7eemv64XvzgY/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbx5fTBiHtEzfsRTp9zeMpzHOApbhCCESWjOKTPkhw7nif4bXY8-Oev7eemv64XvzgY/exec"; // GANTI DENGAN URL EXEC
 
     function handleLogin() {
         const u = document.getElementById('user').value;
         const p = document.getElementById('pass').value;
-        const loader = document.getElementById('loader');
-        
-        loader.style.display = "flex";
         fetch(`${API_URL}?action=login&user=${u}&pass=${p}`)
         .then(r => r.json())
         .then(res => {
-            loader.style.display = "none";
             if(res.status === "success") {
                 document.getElementById('loginPage').style.display = "none";
                 document.getElementById('dashboardPage').style.display = "block";
-                document.getElementById('userName').innerText = `Helio, ${res.data.name}!`;
-            } else { alert(res.message); }
-        }).catch(err => {
-            loader.style.display = "none";
-            alert("Koneksi gagal! Pastikan URL Script benar.");
+                document.getElementById('welcomeName').innerText = `Helio, ${res.data.name}!`;
+            } else { alert("Login Gagal!"); }
         });
     }
 
-    function startAssessment() {
+    function startNCP() {
         document.getElementById('dashboardPage').style.display = "none";
         document.getElementById('assessmentPage').style.display = "block";
     }
 
     function goHome() {
-        document.getElementById('assessmentPage').style.display = "none";
-        document.getElementById('dashboardPage').style.display = "block";
+        location.reload();
     }
 
-    async function runAnalysis() {
-        document.getElementById('loader').style.display = "flex";
+    async function runExpertSystem() {
+        const bb = parseFloat(document.getElementById('in_bb').value);
+        const tb = parseFloat(document.getElementById('in_tb').value) / 100;
+        const imt = bb / (tb * tb);
+        const labType = document.getElementById('in_labType').value;
+        const labVal = parseFloat(document.getElementById('in_labVal').value);
+        const asupan = parseFloat(document.getElementById('in_asupan').value);
+        const fisik = Array.from(document.querySelectorAll('.fisik:checked')).map(c => c.value);
+
+        const db = await fetch(API_URL).then(r => r.json());
+        let saranKode = [];
+
+        // Logika Assessment -> Kode Diagnosa
+        if(imt < 18.5) saranKode.push("NC-3.1");
+        if(imt > 25) saranKode.push("NC-3.3");
+        if(labType === "GDS" && labVal > 200) saranKode.push("NC-2.2");
+        if(asupan < 80) saranKode.push("NI-1.2");
         
-        try {
-            const bb = parseFloat(document.getElementById('in_bb').value);
-            const tb = parseFloat(document.getElementById('in_tb').value) / 100;
-            const imt = bb / (tb * tb);
-            const labType = document.getElementById('in_labType').value;
-            const labVal = parseFloat(document.getElementById('in_labVal').value);
+        fisik.forEach(f => {
+            const found = db.ref_fisik_klinis.find(r => r.Gejala === f);
+            if(found) saranKode.push(found.Kode_Diagnosa);
+        });
 
-            const db = await fetch(API_URL).then(r => r.json());
-            let diagnosaHTML = "";
+        // Ambil Kalimat PES dari Master
+        let uniqueCodes = [...new Set(saranKode)];
+        let finalHTML = "";
 
-            // Logika Antropometri
-            if(imt < 18.5) {
-                const p = db.master_diagnosa_pes.find(m => m.Kode === "NC-3.1");
-                diagnosaHTML += `<div class='mb-3'><strong>(P) ${p['Problem (P)']}</strong><br><small>Berkaitan dengan ${p['Etiologi (E)']} ditandai dengan IMT ${imt.toFixed(1)}</small></div>`;
-            } else if(imt > 25) {
-                const p = db.master_diagnosa_pes.find(m => m.Kode === "NC-3.3");
-                diagnosaHTML += `<div class='mb-3'><strong>(P) ${p['Problem (P)']}</strong><br><small>Berkaitan dengan ${p['Etiologi (E)']} ditandai dengan IMT ${imt.toFixed(1)}</small></div>`;
+        uniqueCodes.forEach(kode => {
+            const pes = db.master_diagnosa_pes.find(m => m.Kode === kode);
+            if(pes) {
+                finalHTML += `<div class='border-bottom mb-3 pb-2'>
+                    <span class='badge bg-warning text-dark mb-1'>${pes.Kode}</span><br>
+                    <strong>Problem:</strong> ${pes['Problem (P)']}<br>
+                    <strong>Etiology:</strong> ${pes['Etiologi (E)']}<br>
+                    <strong>Signs:</strong> ${pes['Signs_Symptoms (S)']}
+                </div>`;
             }
+        });
 
-            // Logika Lab
-            if(labType === "GDS" && labVal > 200) {
-                const p = db.master_diagnosa_pes.find(m => m.Kode === "NC-2.2");
-                diagnosaHTML += `<div class='mb-3'><strong>(P) ${p['Problem (P)']}</strong><br><small>Ditandai dengan GDS ${labVal} mg/dL</small></div>`;
-            }
-
-            document.getElementById('pesOutput').innerHTML = diagnosaHTML || "Pasien dalam batas normal.";
-            document.getElementById('resultArea').style.display = "block";
-        } catch (e) {
-            alert("Gagal memproses data.");
-        } finally {
-            document.getElementById('loader').style.display = "none";
-        }
+        document.getElementById('pesContent').innerHTML = finalHTML || "Pasien Normal.";
+        document.getElementById('resultArea').style.display = "block";
+        window.scrollTo(0, document.body.scrollHeight);
     }
-    
-    // Sembunyikan loader awal
-    window.onload = () => document.getElementById('loader').style.display = "none";
 </script>
-
 </body>
 </html>
