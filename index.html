@@ -3,226 +3,110 @@
 <head>
     <base target="_top">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
-        :root { --teal: #00695c; --orange: #ff9800; --bg: #f0f4f3; }
-        body { background: var(--bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .wizard-card { max-width: 850px; margin: 30px auto; background: white; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); display: none; overflow: hidden; }
-        .active { display: block; animation: fadeIn 0.5s ease; }
-        .login-side { background: #fafafa; padding: 50px; border-left: 1px solid #eee; }
-        .btn-main { background: var(--orange); color: white; border-radius: 15px; padding: 12px; font-weight: bold; border: none; width: 100%; transition: 0.3s; }
-        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,152,0,0.3); }
-        .lab-input { font-size: 11px; padding: 5px; border-radius: 8px; background: #f9f9f9; border: 1px solid #ddd; }
-        #loader { display:none; position:fixed; inset:0; background:rgba(255,255,255,0.9); z-index:1000; flex-direction:column; justify-content:center; align-items:center; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @media print { .no-print { display: none !important; } .wizard-card { box-shadow: none; border: none; margin: 0; width: 100%; } }
+        body { background: #f4f7f6; font-family: 'Segoe UI', sans-serif; padding: 20px; }
+        .card-box { max-width: 500px; margin: 50px auto; background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .step { display: none; }
+        .active { display: block; animation: fadeIn 0.4s; }
+        #loader { display:none; position:fixed; inset:0; background:rgba(255,255,255,0.9); z-index:1000; justify-content:center; align-items:center; flex-direction:column; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div id="loader"><div class="spinner-border text-success"></div><p class="mt-2 fw-bold">Memproses Data...</p></div>
+<div id="loader"><div class="spinner-border text-primary"></div><p class="mt-2">Memuat Data...</p></div>
 
 <div class="container">
-    <div id="stepLogin" class="wizard-card active">
-        <div class="row g-0">
-            <div class="col-md-6 p-5">
-                <h1 class="fw-bold text-teal mt-4">NCP <span class="text-orange">of DA</span></h1>
-                <p class="text-muted">Sistem Pakar Asuhan Gizi Terstandar Berbasis Cloud.</p>
-                <div class="mt-5 d-flex align-items-center">
-                    <img src="FotoProfil.jpg" class="rounded-circle me-3" style="width:60px; height:60px; object-fit:cover;" onerror="this.src='https://via.placeholder.com/150'">
-                    <div><h6 class="mb-0 fw-bold">Dian Agnesia</h6><small class="text-muted">Lecturer of Nutrition</small></div>
-                </div>
-            </div>
-            <div class="col-md-6 login-side">
-                <h5 class="fw-bold mb-4">Sign In</h5>
-                <input type="text" id="user" class="form-control mb-3 rounded-pill px-4" placeholder="Username">
-                <input type="password" id="pass" class="form-control mb-4 rounded-pill px-4" placeholder="Password">
-                <button onclick="doLogin()" class="btn-main shadow">LOGIN SYSTEM</button>
-            </div>
-        </div>
+    <div id="step1" class="card-box active">
+        <h3 class="fw-bold text-center text-primary mb-4">NCP of DA</h3>
+        <input type="text" id="user" class="form-control mb-3 rounded-pill px-4" placeholder="Username">
+        <input type="password" id="pass" class="form-control mb-4 rounded-pill px-4" placeholder="Password">
+        <button onclick="doLogin()" class="btn btn-primary w-100 rounded-pill py-2 fw-bold">SIGN IN</button>
     </div>
 
-    <div id="stepPasien" class="wizard-card p-5">
-        <h4 class="fw-bold text-teal mb-4"><i class="bi bi-person-plus-fill"></i> Registrasi & Identitas</h4>
+    <div id="step2" class="card-box step">
+        <h4 class="fw-bold mb-4 text-success">Identitas Pasien</h4>
+        <input type="text" id="namaP" class="form-control mb-3" placeholder="Nama Lengkap Pasien">
+        <button onclick="goAssess()" class="btn btn-success w-100 rounded-pill">LANJUTKAN</button>
+    </div>
+
+    <div id="step3" class="card-box step" style="max-width: 700px;">
+        <h4 class="fw-bold text-primary mb-4">Assessment</h4>
         <div class="row g-3">
-            <div class="col-12"><label class="small fw-bold">Nama Pasien</label><input type="text" id="namaP" class="form-control bg-light border-0 py-2"></div>
-            <div class="col-md-6"><label class="small fw-bold">Tgl Lahir</label><input type="date" id="tglP" class="form-control bg-light border-0"></div>
-            <div class="col-md-6"><label class="small fw-bold">Jenis Kelamin</label><select id="jkP" class="form-select bg-light border-0"><option>Laki-laki</option><option>Perempuan</option></select></div>
-            <div class="col-12"><label class="small fw-bold">Diagnosa Medis</label><textarea id="diagP" class="form-control bg-light border-0" rows="2"></textarea></div>
+            <div class="col-6"><label class="small fw-bold">BB (kg)</label><input type="number" id="inBB" class="form-control"></div>
+            <div class="col-6"><label class="small fw-bold">TB (cm)</label><input type="number" id="inTB" class="form-control"></div>
         </div>
-        <button onclick="checkH()" class="btn-main mt-4">MULAI ASESMEN</button>
-    </div>
-
-    <div id="stepAssess" class="wizard-card p-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="fw-bold text-teal mb-0">Nutrition Assessment</h4>
-            <span id="badgeV" class="badge bg-success rounded-pill px-3 py-2">Kunjungan Baru</span>
-        </div>
-
-        <div id="areaHistory" class="mb-4" style="display:none;">
-            <div class="p-3 bg-light rounded-4 border">
-                <small class="fw-bold text-primary"><i class="bi bi-clock-history"></i> Riwayat Pasien:</small>
-                <div id="tabelHistory" class="mt-2"></div>
-            </div>
-        </div>
-
-        <div class="row g-3">
-            <div class="col-md-6">
-                <div class="p-3 border rounded-4">
-                    <label class="small fw-bold text-muted mb-2">ANTROPOMETRI</label>
-                    <div class="row g-2">
-                        <div class="col-6"><small>BB (kg)</small><input type="number" id="inBB" class="form-control form-control-sm"></div>
-                        <div class="col-6"><small>TB (cm)</small><input type="number" id="inTB" class="form-control form-control-sm"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="p-3 border rounded-4">
-                    <label class="small fw-bold text-muted mb-2">ASUPAN MAKAN (%)</label>
-                    <h2 class="text-center fw-bold text-orange" id="valAsup">100%</h2>
-                    <input type="range" id="inAsup" class="form-range" min="0" max="150" value="100" oninput="document.getElementById('valAsup').innerText=this.value+'%'">
-                </div>
-            </div>
-            <div class="col-12">
-                <label class="small fw-bold text-muted mb-2">BIOKIMIA & LABORATORIUM</label>
-                <div id="boxLab" class="row row-cols-3 row-cols-md-4 g-2"></div>
-            </div>
-            <div class="col-12">
-                <label class="small fw-bold text-muted mb-2">FISIK & KLINIS (GEJALA)</label>
-                <div id="boxFisik" class="row g-1 small"></div>
-            </div>
-        </div>
-        <button onclick="prosesPES()" class="btn btn-success w-100 mt-5 py-3 rounded-pill fw-bold shadow">PROSES DIAGNOSA (PES)</button>
-    </div>
-
-    <div id="stepHasil" class="wizard-card p-5">
-        <div id="printArea">
-            <div class="text-center">
-                <h4 class="fw-bold mb-0">NUTRITION CARE REPORT</h4>
-                <p id="pVisit" class="text-teal small fw-bold"></p>
-            </div>
-            <hr>
-            <div id="pIdentitas" class="p-3 bg-light rounded-4 mb-3 small border"></div>
-            <h6 class="fw-bold mt-4 mb-3"><i class="bi bi-activity"></i> Diagnosa Gizi (PES)</h6>
-            <div id="pPES"></div>
-            <div class="row mt-5 small">
-                <div class="col-6">Ahli Gizi Pemeriksa:<br><b id="pAhli"></b></div>
-                <div class="col-6 text-end">Tanda Tangan,<br><br><br><b>( ________________ )</b></div>
-            </div>
-        </div>
-        <button onclick="cetakPDF()" class="btn btn-primary w-100 mt-4 rounded-pill py-2 fw-bold no-print"><i class="bi bi-printer"></i> SIMPAN & CETAK PDF</button>
-        <button onclick="location.reload()" class="btn btn-link w-100 mt-2 text-muted no-print text-decoration-none">Input Pasien Lain</button>
+        <button onclick="finalSimpan()" class="btn btn-danger w-100 mt-4 rounded-pill">SIMPAN & SELESAI</button>
     </div>
 </div>
 
 <script>
-    let DB = {}, userNow = "", vNum = 1;
+    let DB = {}, userActive = "", kunjunganKe = 1;
 
-    function load(s) { document.getElementById('loader').style.display = s?'flex':'none'; }
-    function show(id) { document.querySelectorAll('.wizard-card').forEach(c => c.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+    function loading(s) { document.getElementById('loader').style.display = s ? 'flex' : 'none'; }
+    function show(id) { 
+        document.querySelectorAll('.card-box, .step').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active'); 
+    }
 
     function doLogin() {
-        load(true);
-        google.script.run.withSuccessHandler(res => {
-            DB = res;
-            const u = document.getElementById('user').value, p = document.getElementById('pass').value;
-            const valid = DB.user_access.find(x => x.username == u && x.password == p);
-            if(valid) {
-                userNow = valid.nama_lengkap;
-                renderFields();
-                show('stepPasien');
-            } else { alert("Login Gagal!"); }
-            load(false);
-        }).getFullDatabase();
+        const u = document.getElementById('user').value;
+        const p = document.getElementById('pass').value;
+        if(!u || !p) return alert("Isi username & password!");
+
+        loading(true);
+        google.script.run
+            .withSuccessHandler(res => {
+                DB = res;
+                // Pastikan nama sheet adalah user_access (kecil semua, pakai underscore)
+                const user = DB.user_access.find(x => x.username == u && x.password == p);
+                if(user) {
+                    userActive = user.nama_lengkap;
+                    show('step2');
+                } else {
+                    alert("Login Gagal: Username atau Password salah.");
+                }
+                loading(false);
+            })
+            .withFailureHandler(err => {
+                loading(false);
+                alert("Error Sistem: " + err.message);
+            })
+            .getFullDatabase();
     }
 
-    function renderFields() {
-        let labH = "";
-        DB.logika_biokimia.forEach(b => {
-            labH += `<div class="col"><div class="lab-input"><label style="font-size:8px" class="fw-bold d-block text-muted">${b.Parameter}</label><input type="number" class="form-control form-control-sm border-0 bg-transparent p-0 in-lab" data-param="${b.Parameter}"></div></div>`;
-        });
-        document.getElementById('boxLab').innerHTML = labH;
-
-        let fisH = "";
-        DB.logika_fisik_klinis.forEach((f, i) => {
-            fisH += `<div class="col-6 col-md-4"><div class="form-check"><input class="form-check-input chk-f" type="checkbox" value="${f.Gejala}" id="f${i}"><label class="form-check-label" for="f${i}">${f.Gejala}</label></div></div>`;
-        });
-        document.getElementById('boxFisik').innerHTML = fisH;
-    }
-
-    function checkH() {
-        const n = document.getElementById('namaP').value;
-        if(!n) return alert("Masukkan nama pasien!");
-        load(true);
-        google.script.run.withSuccessHandler(hist => {
-            vNum = hist.length + 1;
-            document.getElementById('badgeV').innerText = "Pemeriksaan Ke-" + vNum;
-            document.getElementById('pVisit').innerText = "Pemeriksaan Ke-" + vNum;
-            if(hist.length > 0) {
-                let t = `<table class="table table-sm table-bordered mt-2 bg-white" style="font-size:10px">
-                    <thead class="table-dark"><tr><th>Tgl</th><th>BB</th><th>IMT</th><th>PES</th></tr></thead><tbody>`;
-                hist.forEach(r => t += `<tr><td>${r.Tanggal_Periksa}</td><td>${r.BB_kg}</td><td>${r.IMT}</td><td>${r.Kode_PES}</td></tr>`);
-                document.getElementById('tabelHistory').innerHTML = t + "</tbody></table>";
-                document.getElementById('areaHistory').style.display = "block";
-            }
-            show('stepAssess');
-            load(false);
-        }).getPatientHistory(n);
-    }
-
-    function prosesPES() {
-        const bb = parseFloat(document.getElementById('inBB').value), tb = parseFloat(document.getElementById('inTB').value)/100;
-        const imt = bb / (tb * tb), asup = parseFloat(document.getElementById('inAsup').value);
-        let codes = [];
-
-        // Logika Antropometri
-        DB.logika_antropometri.forEach(r => {
-            if(imt >= r.Ambang_Bawah && imt <= r.Ambang_Atas) codes.push(r.Kode_Diagnosa);
-        });
-        // Logika Fisik
-        document.querySelectorAll('.chk-f:checked').forEach(c => {
-            const rule = DB.logika_fisik_klinis.find(x => x.Gejala == c.value);
-            if(rule) codes.push(rule.Kode_Diagnosa);
-        });
-
-        const uniqueCodes = [...new Set(codes)];
-        renderReport(imt, uniqueCodes);
-    }
-
-    function renderReport(imt, codes) {
-        document.getElementById('pAhli').innerText = userNow;
-        document.getElementById('pIdentitas').innerHTML = `
-            <div class="row"><div class="col-6"><b>Pasien:</b> ${document.getElementById('namaP').value}</div>
-            <div class="col-6 text-end"><b>IMT:</b> ${imt.toFixed(1)} (${asupAn(imt)})</div></div>`;
+    function goAssess() {
+        const nama = document.getElementById('namaP').value;
+        if(!nama) return alert("Isi nama pasien!");
         
-        let h = "", textCodes = "";
-        codes.forEach(c => {
-            const m = DB.master_diagnosa_pes.find(x => x.Kode == c);
-            if(m) {
-                h += `<div class="p-3 border-start border-4 border-success bg-white mb-2 shadow-sm small">
-                    <b class="text-success">${m.Kode}: ${m['Problem (P)']}</b><br>
-                    <span class="text-muted">E: ${m['Etiologi (E)']} | S: ${m['Signs_Symptoms (S)']}</span></div>`;
-                textCodes += c + ", ";
-            }
-        });
-        document.getElementById('pPES').innerHTML = h || "<p class='text-muted'>Tidak ditemukan diagnosa gizi spesifik.</p>";
-
-        google.script.run.saveAssessment({
-            Nama_Pasien: document.getElementById('namaP').value, Kunjungan_Ke: vNum,
-            Diagnosa_Medis: document.getElementById('diagP').value, BB_kg: document.getElementById('inBB').value,
-            TB_cm: document.getElementById('inTB').value, IMT: imt.toFixed(1),
-            Asupan: document.getElementById('inAsup').value, Data_Biokimia: "",
-            Fisik_Klinis: "", Kode_PES: textCodes, Ahli_Gizi: userNow
-        });
-        show('stepHasil');
+        // Cek history kunjungan
+        const hist = DB.History_Assessment.filter(x => x.Nama_Pasien.toString().toLowerCase() === nama.toLowerCase());
+        kunjunganKe = hist.length + 1;
+        
+        show('step3');
     }
 
-    function asupAn(i) { return i < 18.5 ? "Kurus" : i < 25 ? "Normal" : "Overweight"; }
+    function finalSimpan() {
+        const bb = parseFloat(document.getElementById('inBB').value);
+        const tb = parseFloat(document.getElementById('inTB').value) / 100;
+        const imt = (bb / (tb * tb)).toFixed(1);
 
-    function cetakPDF() {
-        const n = document.getElementById('namaP').value || "Pasien";
-        document.title = "NCPofDA_" + n;
-        window.print();
+        const payload = {
+            Nama_Pasien: document.getElementById('namaP').value,
+            Kunjungan_Ke: kunjunganKe,
+            BB_kg: bb,
+            TB_cm: document.getElementById('inTB').value,
+            IMT: imt,
+            Asupan: 100,
+            Ahli_Gizi: userActive,
+            Kode_PES: "Dihitung Otomatis"
+        };
+
+        loading(true);
+        google.script.run.withSuccessHandler(() => {
+            alert("Data Berhasil Disimpan!");
+            location.reload();
+        }).saveAssessment(payload);
     }
 </script>
 </body>
