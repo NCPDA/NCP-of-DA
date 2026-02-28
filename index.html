@@ -10,49 +10,50 @@
         :root { --teal-dark: #00695c; --teal-light: #00897b; --orange: #ff9800; --bg-soft: #f8fbfb; }
         body { background: var(--bg-soft); font-family: 'Inter', 'Segoe UI', sans-serif; color: #444; }
         
+        /* LOGIN PAGE ESTETIK */
         .login-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .login-card { max-width: 950px; width: 100%; background: white; border-radius: 40px; overflow: hidden; display: flex; box-shadow: 0 20px 60px rgba(0,0,0,0.06); }
+        .login-card { max-width: 950px; width: 100%; background: white; border-radius: 40px; overflow: hidden; display: flex; box-shadow: 0 20px 60px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.03); }
         .login-left { background: #ffffff; padding: 70px; flex: 1.3; border-right: 1px solid #f0f0f0; }
         .login-right { background: #fafdfc; padding: 70px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
-        
+        .profile-box { display: flex; align-items: center; margin-bottom: 40px; }
+        .profile-img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid #8bc34a; object-fit: cover; margin-right: 20px; }
         .brand-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; }
         .brand-title span { color: var(--orange); }
         .brand-title em { color: var(--teal-light); font-style: normal; }
-        
+        .input-custom { background: #f1f5f4 !important; border: none !important; border-radius: 20px !important; padding: 15px 25px !important; }
+        .btn-login { background: var(--orange); color: white; border: none; border-radius: 20px; padding: 15px; font-weight: 700; width: 100%; margin-top: 20px; box-shadow: 0 10px 20px rgba(255,152,0,0.2); }
+
+        /* WIZARD & LOADER */
         .wizard-step { display: none; background: white; border-radius: 30px; padding: 40px; box-shadow: 0 15px 40px rgba(0,0,0,0.04); margin-bottom: 30px; }
-        .active { display: block; animation: fadeIn 0.5s ease; }
-        
-        .section-title { font-weight: 800; color: var(--teal-dark); margin-bottom: 25px; position: relative; padding-left: 15px; }
-        .section-title::before { content: ''; position: absolute; left: 0; top: 5px; height: 25px; width: 5px; background: var(--orange); border-radius: 10px; }
-        
-        #loader { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @media print { .no-print { display: none !important; } }
+        .section-title { font-weight: 800; color: var(--teal-dark); margin-bottom: 25px; position: relative; padding-left: 15px; border-left: 5px solid var(--orange); }
+        #loader { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 10000; justify-content: center; align-items: center; }
+        @media print { .no-print { display: none !important; } body { background: white; } .wizard-step { box-shadow: none; padding: 0; } }
     </style>
 </head>
 <body>
 
-<div id="loader">
-    <div class="spinner-border text-success mb-3"></div>
-    <span class="fw-bold text-teal-dark">Sinkronisasi Cloud...</span>
-</div>
+<div id="loader"><div class="spinner-border text-success"></div></div>
 
 <div class="container">
     <div id="navArea" class="mt-4 mb-2 text-end no-print" style="display:none; max-width: 800px; margin: auto;">
-        <span class="me-3 small text-muted">Petugas: <strong id="userNameDisplay"></strong></span>
+        <span class="me-3 small text-muted">User: <strong id="userName"></strong></span>
         <button onclick="location.reload()" class="btn btn-sm btn-outline-danger rounded-pill px-3">Logout</button>
     </div>
 
     <div id="stepLogin" class="login-wrapper">
         <div class="login-card">
             <div class="login-left">
+                <div class="profile-box">
+                    <img src="FotoProfil.jpg" class="profile-img" alt="Dian Agnesia" onerror="this.src='https://via.placeholder.com/150'">
+                    <div class="profile-info"><h5>Dian Agnesia</h5><p class="text-muted mb-0">Lecturer of Nutrition</p></div>
+                </div>
                 <h1 class="brand-title"><em>NCP</em> <span>of DA</span></h1>
-                <p class="text-muted">Platform Rekam Medis Gizi Digital terintegrasi dengan NIK Pasien.</p>
+                <p class="text-muted">Platform digital Nutrition Care Process terstruktur dan efisien.</p>
             </div>
-            <div class="login-right">
-                <input type="text" id="user" class="form-control mb-3 py-3 rounded-4 bg-light border-0 px-4" placeholder="Username">
-                <input type="password" id="pass" class="form-control mb-4 py-3 rounded-4 bg-light border-0 px-4" placeholder="Password">
-                <button onclick="doLogin()" class="btn btn-warning w-100 py-3 rounded-4 fw-bold text-white shadow">SIGN IN</button>
+            <div class="login-right text-center">
+                <input type="text" id="user" class="form-control input-custom mb-3" placeholder="Username">
+                <input type="password" id="pass" class="form-control input-custom mb-4" placeholder="Password">
+                <button onclick="doLogin()" class="btn-login">SIGN IN</button>
             </div>
         </div>
     </div>
@@ -60,136 +61,99 @@
     <div style="max-width: 800px; margin: auto;">
         <div id="stepPasien" class="wizard-step">
             <h4 class="section-title">Identitas Pasien</h4>
-            <div class="row g-3">
-                <div class="col-12">
-                    <label class="small fw-bold">NIK (Gunakan untuk cari data)</label>
-                    <div class="input-group">
-                        <input type="text" id="inNIK" class="form-control bg-light border-0 py-2" placeholder="Masukkan 16 Digit NIK">
-                        <button onclick="cekNIK()" class="btn btn-teal-light text-white px-4 border-0" style="background: var(--teal-light)">CEK</button>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <input type="text" id="namaP" class="form-control bg-light border-0 py-2" placeholder="Nama Lengkap">
-                </div>
-                <div class="col-6">
-                    <input type="date" id="tglP" class="form-control bg-light border-0 py-2">
-                </div>
-                <div class="col-6">
-                    <select id="jkP" class="form-select bg-light border-0 py-2">
-                        <option>Laki-laki</option>
-                        <option>Perempuan</option>
-                    </select>
-                </div>
-                <div class="col-12">
-                    <textarea id="diagP" class="form-control bg-light border-0" placeholder="Diagnosa Medis" rows="2"></textarea>
-                </div>
+            <div class="input-group mb-3">
+                <input type="text" id="inNIK" class="form-control form-control-lg rounded-start-4 bg-light border-0" placeholder="Masukkan NIK">
+                <button onclick="cekNIK()" class="btn btn-dark rounded-end-4 px-4">CEK NIK</button>
             </div>
-            <button onclick="show('stepAssess')" class="btn btn-dark w-100 mt-5 rounded-pill py-3 fw-bold shadow">ASESMEN LANJUTAN</button>
+            <input type="text" id="namaP" class="form-control form-control-lg mb-3 rounded-4 bg-light border-0" placeholder="Nama Pasien">
+            <div class="row g-3">
+                <div class="col-6"><input type="date" id="tglP" class="form-control bg-light border-0 py-2"></div>
+                <div class="col-6"><select id="jkP" class="form-select bg-light border-0 py-2"><option>Laki-laki</option><option>Perempuan</option></select></div>
+            </div>
+            <textarea id="diagP" class="form-control mt-3 bg-light border-0" placeholder="Diagnosa Medis" rows="2"></textarea>
+            <button onclick="show('stepAssess')" class="btn btn-dark w-100 mt-5 rounded-pill py-3 fw-bold">LANJUT KE ASESMEN</button>
         </div>
 
         <div id="stepAssess" class="wizard-step">
             <h4 class="section-title">Nutrition Assessment</h4>
             <div class="row g-3">
-                <div class="col-6"><input type="number" id="inBB" class="form-control bg-light border-0 py-2" placeholder="BB (kg)"></div>
-                <div class="col-6"><input type="number" id="inTB" class="form-control bg-light border-0 py-2" placeholder="TB (cm)"></div>
-                <div class="col-12 mt-3">
-                    <label class="small fw-bold">Asupan Energi: <span id="valAsup" class="text-success">100</span>%</label>
+                <div class="col-6"><input type="number" id="inBB" class="form-control bg-light" placeholder="BB (kg)"></div>
+                <div class="col-6"><input type="number" id="inTB" class="form-control bg-light" placeholder="TB (cm)"></div>
+                <div class="col-12 mt-3"><label class="small fw-bold">Asupan: <span id="valAsup">100</span>%</label>
                     <input type="range" id="inAsup" class="form-range" min="0" max="150" value="100" oninput="document.getElementById('valAsup').innerText=this.value">
                 </div>
                 <div class="col-12"><label class="small fw-bold text-muted text-uppercase mb-2">Biokimia</label><div class="row row-cols-2 g-2" id="labContainer"></div></div>
-                <div class="col-12"><label class="small fw-bold text-muted text-uppercase mb-2 mt-3">Fisik & Klinis</label><div id="listFisik" class="row row-cols-2 g-2"></div></div>
+                <div id="listFisik" class="row mt-3"></div>
             </div>
             <button onclick="prosesPES()" class="btn btn-success w-100 mt-5 rounded-pill py-3 fw-bold shadow">GENERATE PES & SIMPAN</button>
         </div>
 
         <div id="stepHasil" class="wizard-step">
             <div id="cetakArea">
-                <center><h5 class="fw-bold mb-3">NUTRITION CARE REPORT</h5></center>
+                <center><img src="logo_NCPDA.png" width="80" class="mb-3"><h5 class="fw-bold">NUTRITION CARE REPORT</h5></center>
+                <hr>
                 <div id="hasilPasien" class="mb-4 p-3 bg-light rounded-4 small border"></div>
-                <h6 class="fw-bold">Diagnosa Gizi (PES)</h6>
                 <div id="hasilPES"></div>
                 <div class="row mt-5 small">
-                    <div class="col-7 text-muted italic">Dicetak pada: <strong id="waktuCetak"></strong></div>
+                    <div class="col-7 text-muted italic">Dicetak pada: <br><strong id="waktuCetak"></strong></div>
                     <div class="col-5 text-end">Ahli Gizi,<br><br><strong id="namaAhliGizi"></strong></div>
                 </div>
             </div>
-            <button onclick="window.print()" class="btn btn-primary w-100 mt-4 rounded-pill py-3 no-print shadow-sm">CETAK PDF</button>
-            <button onclick="location.reload()" class="btn btn-link w-100 mt-2 text-muted no-print text-decoration-none">Pasien Baru</button>
+            <button onclick="saveAndPrint()" class="btn btn-primary w-100 mt-4 rounded-pill py-2 shadow-sm no-print">SIMPAN PDF</button>
+            <button onclick="location.reload()" class="btn btn-link w-100 mt-2 text-muted no-print text-decoration-none">Input Pasien Baru</button>
         </div>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyizjJ_n_ScysqjInE17XNDgcSo7oPw2XyQAFfrP0JBkYgJGrHKYiYdq5eoZ2hKb8A/exec"; 
-    let DB = null, currentNutritionist = "", userRole = "", currentVisit = 1;
-
-    function toggleLoad(s) { document.getElementById('loader').style.display = s?'flex':'none'; }
-    function show(id) { 
-        document.querySelectorAll('.wizard-step').forEach(s => s.style.display = "none"); 
-        document.getElementById(id).style.display = "block"; 
-        window.scrollTo(0,0);
-    }
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwZXiin08hfXmW0zS4Xfy8MCcZfra-quMy8MyJhIQTE_-BLaAv-89zMGE4eZGUmFLI/exec";
+    let DB = null, currentNutritionist = "", currentVisit = 1;
 
     async function doLogin() {
         const u = document.getElementById('user').value, p = document.getElementById('pass').value;
-        if(!u || !p) return alert("Username & Password wajib diisi");
+        if(!u || !p) return;
         toggleLoad(true);
-        try {
-            const res = await fetch(`${SCRIPT_URL}?action=login&user=${u}&pass=${p}`).then(r => r.json());
-            if(res.status === "success") {
-                currentNutritionist = res.name;
-                userRole = res.role;
-                DB = await fetch(SCRIPT_URL).then(r => r.json());
-                renderInputs();
-                document.getElementById('userNameDisplay').innerText = `${res.name} (${res.role})`;
-                document.getElementById('navArea').style.display = "block";
-                document.getElementById('stepLogin').style.display = "none";
-                show('stepPasien');
-            } else { alert("Login Gagal!"); }
-        } catch(e) { alert("Error Server"); }
+        const res = await fetch(`${SCRIPT_URL}?action=login&user=${u}&pass=${p}`).then(r => r.json());
+        if(res.status === "success") {
+            currentNutritionist = res.name;
+            DB = await fetch(SCRIPT_URL).then(r => r.json());
+            renderInputs();
+            document.getElementById('userName').innerText = `${res.name} (${res.role})`;
+            document.getElementById('navArea').style.display = "block";
+            document.getElementById('stepLogin').style.display = "none";
+            show('stepPasien');
+        } else { alert("Login Gagal!"); }
         toggleLoad(false);
     }
 
     async function cekNIK() {
         const nik = document.getElementById('inNIK').value;
-        if(!nik) return alert("Masukkan NIK");
+        if(!nik) return;
         toggleLoad(true);
-        try {
-            const res = await fetch(`${SCRIPT_URL}?action=cekNIK&nik=${nik}`).then(r => r.json());
-            if(res.status === "found") {
-                document.getElementById('namaP').value = res.nama;
-                document.getElementById('tglP').value = res.tglLahir;
-                document.getElementById('jkP').value = res.jk;
-                currentVisit = res.kunjunganKe;
-                alert(`Data ditemukan! Kunjungan ke-${res.kunjunganKe}`);
-            } else {
-                currentVisit = 1;
-                alert("Pasien Baru (Kunjungan ke-1)");
-            }
-        } catch(e) { alert("NIK tidak ditemukan/Error"); }
+        const res = await fetch(`${SCRIPT_URL}?action=cekNIK&nik=${nik}`).then(r => r.json());
+        if(res.status === "found") {
+            document.getElementById('namaP').value = res.nama;
+            document.getElementById('tglP').value = res.tglLahir;
+            document.getElementById('jkP').value = res.jk;
+            currentVisit = res.kunjunganKe;
+            alert(`Pasien Lama (Kunjungan ke-${res.kunjunganKe})`);
+        } else { currentVisit = 1; alert("Pasien Baru"); }
         toggleLoad(false);
     }
 
     function renderInputs() {
         let labH = "";
-        DB.logika_biokimia.forEach(item => {
-            labH += `<div class="col"><div class="p-2 border rounded bg-white"><label style="font-size:9px" class="fw-bold d-block text-muted text-uppercase">${item.parameter}</label><input type="number" class="form-control form-control-sm border-0 p-0 in-lab" data-param="${item.parameter}"></div></div>`;
-        });
+        DB.logika_biokimia.forEach(i => labH += `<div class="col"><div class="p-2 border rounded bg-white small"><label class="fw-bold d-block text-muted" style="font-size:9px">${i.parameter}</label><input type="number" class="form-control form-control-sm border-0 in-lab" data-param="${i.parameter}"></div></div>`);
         document.getElementById('labContainer').innerHTML = labH;
-
         let fisH = "";
-        DB.logika_fisik_klinis.forEach((item, i) => {
-            fisH += `<div class="col"><div class="form-check"><input class="form-check-input chk-fisik" type="checkbox" value="${item.gejala}" id="f${i}"><label class="form-check-label" for="f${i}">${item.gejala}</label></div></div>`;
-        });
+        DB.logika_fisik_klinis.forEach((item, i) => fisH += `<div class="col-6 small"><div class="form-check"><input class="form-check-input chk-fisik" type="checkbox" value="${item.gejala}" id="f${i}"><label class="form-check-label" for="f${i}">${item.gejala}</label></div></div>`);
         document.getElementById('listFisik').innerHTML = fisH;
     }
 
     async function prosesPES() {
         const bb = parseFloat(document.getElementById('inBB').value), tb = parseFloat(document.getElementById('inTB').value)/100;
-        if(!bb || !tb) return alert("Lengkapi data BB/TB");
         const imt = bb / (tb * tb), asup = parseFloat(document.getElementById('inAsup').value);
         let codes = [];
-        
         if(imt < 18.5) codes.push("NC-3.1"); else if(imt > 25) codes.push("NC-3.3");
         document.querySelectorAll('.in-lab').forEach(input => {
             const val = parseFloat(input.value);
@@ -206,12 +170,8 @@
         
         toggleLoad(true);
         const params = new URLSearchParams({
-            action: "simpanHistory",
-            nik: document.getElementById('inNIK').value,
-            nama: document.getElementById('namaP').value,
-            visit: currentVisit,
-            diagMedis: document.getElementById('diagP').value,
-            bb: bb, tb: document.getElementById('inTB').value,
+            action: "simpanHistory", nik: document.getElementById('inNIK').value, nama: document.getElementById('namaP').value,
+            visit: currentVisit, diagMedis: document.getElementById('diagP').value, bb: bb, tb: document.getElementById('inTB').value,
             imt: imt.toFixed(1), asupan: asup, pes: finalCodes.join(", "), ahli: currentNutritionist
         });
         await fetch(`${SCRIPT_URL}?${params.toString()}`);
@@ -221,16 +181,25 @@
 
     function renderReport(imt, codes) {
         document.getElementById('namaAhliGizi').innerText = currentNutritionist;
-        document.getElementById('waktuCetak').innerText = new Date().toLocaleString();
-        document.getElementById('hasilPasien').innerHTML = `<b>NIK:</b> ${document.getElementById('inNIK').value} | <b>Nama:</b> ${document.getElementById('namaP').value} <br> <b>Kunjungan Ke:</b> ${currentVisit} | <b>IMT:</b> ${imt.toFixed(1)}`;
+        document.getElementById('waktuCetak').innerText = new Date().toLocaleString('id-ID');
+        document.getElementById('hasilPasien').innerHTML = `<b>NIK:</b> ${document.getElementById('inNIK').value} | <b>Nama:</b> ${document.getElementById('namaP').value}<br><b>Kunjungan:</b> ${currentVisit} | <b>IMT:</b> ${imt.toFixed(1)}`;
         let h = "";
         codes.forEach(k => {
             const p = DB.master_diagnosa_pes.find(x => x.kode === k);
-            if(p) h += `<div class="p-3 border-start border-4 border-success bg-light mb-2 small shadow-sm rounded-end"><b>${p.kode}: ${p['problem (p)']}</b><p class="mb-0">E: ${p['etiologi (e)']} | S: ${p['signs_symptoms (s)']}</p></div>`;
+            if(p) h += `<div class="p-2 border-start border-3 border-success bg-light mb-2 small"><b>${p.kode}</b>: ${p['problem (p)']}<br><span class="text-muted">E: ${p['etiologi (e)']}</span></div>`;
         });
-        document.getElementById('hasilPES').innerHTML = h || "Normal.";
+        document.getElementById('hasilPES').innerHTML = h || "Hasil Normal.";
         show('stepHasil');
     }
+
+    function saveAndPrint() {
+        const namaPasien = document.getElementById('namaP').value || "Pasien";
+        document.title = "NCP of DA_" + namaPasien; // Standar Penamaan File Sesuai Request
+        window.print();
+    }
+
+    function show(id) { document.querySelectorAll('.wizard-step').forEach(s => s.style.display = "none"); document.getElementById(id).style.display = "block"; }
+    function toggleLoad(s) { document.getElementById('loader').style.display = s?'flex':'none'; }
 </script>
 </body>
 </html>
