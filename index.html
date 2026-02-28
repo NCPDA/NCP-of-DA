@@ -10,24 +10,25 @@
         :root { --teal-dark: #00695c; --teal-light: #00897b; --orange: #ff9800; --bg-soft: #f8fbfb; }
         body { background: var(--bg-soft); font-family: 'Inter', sans-serif; color: #444; }
         
-        /* LOGIN PAGE ESTETIK */
+        /* LOGIN PAGE */
         .login-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .login-card { max-width: 950px; width: 100%; background: white; border-radius: 40px; overflow: hidden; display: flex; box-shadow: 0 20px 60px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.03); }
         .login-left { background: #ffffff; padding: 60px; flex: 1.3; border-right: 1px solid #f0f0f0; }
         .login-right { background: #fafdfc; padding: 60px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
-        .profile-box { display: flex; align-items: center; margin-bottom: 30px; }
-        .profile-img { width: 85px; height: 85px; border-radius: 50%; border: 3px solid #8bc34a; object-fit: cover; margin-right: 18px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
-        .brand-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; }
+        .profile-box { display: flex; align-items: center; margin-bottom: 25px; }
+        .profile-img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #8bc34a; object-fit: cover; margin-right: 15px; }
+        .app-logo-login { width: 120px; margin-bottom: 20px; }
+        .brand-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 15px; letter-spacing: -1px; }
         .brand-title span { color: var(--orange); }
         .brand-title em { color: var(--teal-light); font-style: normal; }
         .input-custom { background: #f1f5f4 !important; border: none !important; border-radius: 20px !important; padding: 15px 25px !important; }
         .btn-login { background: var(--orange); color: white; border: none; border-radius: 20px; padding: 15px; font-weight: 700; width: 100%; margin-top: 10px; box-shadow: 0 10px 20px rgba(255,152,0,0.2); transition: 0.3s; }
-        .btn-login:hover { transform: translateY(-2px); opacity: 0.9; }
 
         /* APP UI */
         .wizard-step { display: none; background: white; border-radius: 30px; padding: 40px; box-shadow: 0 15px 40px rgba(0,0,0,0.04); margin-bottom: 30px; animation: fadeIn 0.4s ease; }
         .section-title { font-weight: 800; color: var(--teal-dark); margin-bottom: 25px; border-left: 5px solid var(--orange); padding-left: 15px; }
         #loader { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; }
+        .report-header-logo { width: 80px; margin-bottom: 15px; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @media print { .no-print { display: none !important; } body { background: white; } .wizard-step { box-shadow: none; padding: 0; } }
@@ -37,40 +38,42 @@
 
 <div id="loader">
     <div class="spinner-border text-success mb-3" style="width: 3rem; height: 3rem;"></div>
-    <span class="fw-bold text-teal-dark">Memproses Data Gizi...</span>
+    <span class="fw-bold text-teal-dark">Menyinkronkan Data...</span>
 </div>
 
 <div class="container">
     <div id="navArea" class="mt-4 mb-2 text-end no-print" style="display:none; max-width: 800px; margin: auto;">
-        <span class="me-3 small text-muted">Petugas: <strong id="userNameDisplay"></strong></span>
+        <span class="me-3 small text-muted">User: <strong id="userNameDisplay"></strong></span>
         <button onclick="location.reload()" class="btn btn-sm btn-outline-danger rounded-pill px-3">Logout</button>
     </div>
 
     <div id="stepLogin" class="login-wrapper">
         <div class="login-card">
             <div class="login-left">
+                <img src="logo_NCPDA.png" class="app-logo-login" alt="Logo" onerror="this.style.display='none'">
                 <div class="profile-box">
                     <img src="FotoProfil.jpg" class="profile-img" alt="Dian Agnesia" onerror="this.src='https://via.placeholder.com/150'">
                     <div class="profile-info"><h5>Dian Agnesia</h5><p class="text-muted mb-0 small">Lecturer of Nutrition</p></div>
                 </div>
                 <h1 class="brand-title"><em>NCP</em> <span>of DA</span></h1>
-                <p class="text-muted">Expert System untuk Diagnosa Gizi Terstandar (PES).</p>
+                <p class="text-muted">Digital Nutrition Care Process & Expert System.</p>
             </div>
             <div class="login-right">
-                <h5 class="fw-bold mb-4 text-center">Sign In</h5>
+                <h5 class="fw-bold mb-4 text-center">Akses Masuk</h5>
                 <input type="text" id="user" class="form-control input-custom mb-3" placeholder="Username">
                 <input type="password" id="pass" class="form-control input-custom mb-4" placeholder="Password">
-                <button onclick="doLogin()" class="btn-login">MASUK SISTEM</button>
+                <button onclick="doLogin()" class="btn-login">SIGN IN</button>
             </div>
         </div>
     </div>
 
     <div style="max-width: 800px; margin: auto;">
+        
         <div id="stepPasien" class="wizard-step">
             <h4 class="section-title">Identitas Pasien</h4>
             <div class="input-group mb-4">
-                <input type="text" id="inNIK" class="form-control form-control-lg rounded-start-4 bg-light border-0" placeholder="Input NIK 16 Digit">
-                <button onclick="cekNIK()" class="btn btn-dark rounded-end-4 px-4">CARI DATA</button>
+                <input type="text" id="inNIK" class="form-control form-control-lg rounded-start-4 bg-light border-0" placeholder="Masukkan NIK Pasien">
+                <button onclick="cekNIK()" class="btn btn-dark rounded-end-4 px-4">CEK NIK</button>
             </div>
             <div class="row g-3">
                 <div class="col-12"><input type="text" id="namaP" class="form-control bg-light border-0 py-3 rounded-4" placeholder="Nama Pasien"></div>
@@ -83,7 +86,7 @@
                 </div>
                 <div class="col-12"><textarea id="diagP" class="form-control bg-light border-0 py-3" placeholder="Diagnosa Medis" rows="2"></textarea></div>
             </div>
-            <button onclick="show('stepAssess')" class="btn btn-dark w-100 mt-5 rounded-pill py-3 fw-bold">ASESMEN GIZI</button>
+            <button onclick="show('stepAssess')" class="btn btn-dark w-100 mt-5 rounded-pill py-3 fw-bold">LANJUT ASESMEN</button>
         </div>
 
         <div id="stepAssess" class="wizard-step">
@@ -97,22 +100,26 @@
                 <div class="col-12 mt-4"><label class="small fw-bold text-muted mb-2">Data Biokimia</label><div class="row row-cols-2 row-cols-md-3 g-2" id="labContainer"></div></div>
                 <div class="col-12 mt-4"><label class="small fw-bold text-muted mb-2">Fisik & Klinis</label><div id="listFisik" class="row row-cols-2 g-2"></div></div>
             </div>
-            <button onclick="prosesPES()" class="btn btn-success w-100 mt-5 rounded-pill py-3 fw-bold shadow">SIMPAN & LIHAT HASIL</button>
+            <button onclick="prosesPES()" class="btn btn-success w-100 mt-5 rounded-pill py-3 fw-bold shadow">GENERATE PES & SIMPAN</button>
         </div>
 
         <div id="stepHasil" class="wizard-step">
             <div id="cetakArea">
-                <center><h5 class="fw-bold mb-4">NUTRITION CARE PROCESS REPORT</h5></center>
+                <center>
+                    <img src="logo_NCPDA.png" class="report-header-logo" alt="Logo" onerror="this.style.display='none'">
+                    <h5 class="fw-bold mb-1">NUTRITION CARE REPORT</h5>
+                    <p class="small text-muted mb-4">NCP of DA Expert System</p>
+                </center>
                 <div id="hasilPasien" class="mb-4 p-3 bg-light rounded-4 small border"></div>
-                <h6 class="fw-bold mt-4"><i class="bi bi-clipboard-pulse text-success me-2"></i>Diagnosa Gizi (PES)</h6>
+                <h6 class="fw-bold mt-4 border-bottom pb-2">DIAGNOSA GIZI (PES)</h6>
                 <div id="hasilPES"></div>
                 <div class="row mt-5 small">
                     <div class="col-7 text-muted italic">Dicetak pada: <br><strong id="waktuCetak"></strong></div>
                     <div class="col-5 text-end">Ahli Gizi,<br><br><br><strong id="namaAhliGizi"></strong></div>
                 </div>
             </div>
-            <button onclick="saveAndPrint()" class="btn btn-primary w-100 mt-4 rounded-pill py-3 no-print shadow">CETAK / SIMPAN PDF</button>
-            <button onclick="location.reload()" class="btn btn-link w-100 mt-2 text-muted no-print text-decoration-none">Pasien Baru</button>
+            <button onclick="saveAndPrint()" class="btn btn-primary w-100 mt-4 rounded-pill py-3 no-print shadow">SIMPAN PDF</button>
+            <button onclick="location.reload()" class="btn btn-link w-100 mt-2 text-muted no-print text-decoration-none">Input Pasien Baru</button>
         </div>
     </div>
 </div>
@@ -123,7 +130,7 @@
 
     async function doLogin() {
         const u = document.getElementById('user').value, p = document.getElementById('pass').value;
-        if(!u || !p) return alert("Username/Password Kosong");
+        if(!u || !p) return alert("Isi Username/Password");
         toggleLoad(true);
         try {
             const res = await fetch(`${SCRIPT_URL}?action=login&user=${u}&pass=${p}`).then(r => r.json());
@@ -136,7 +143,7 @@
                 document.getElementById('stepLogin').style.display = "none";
                 show('stepPasien');
             } else { alert("Login Gagal!"); }
-        } catch(e) { alert("Error Koneksi"); }
+        } catch(e) { alert("Error Server"); }
         toggleLoad(false);
     }
 
@@ -164,9 +171,8 @@
 
     async function prosesPES() {
         const bb = parseFloat(document.getElementById('inBB').value), tb = parseFloat(document.getElementById('inTB').value)/100;
-        if(!bb || !tb) return alert("BB/TB Kosong");
+        if(!bb || !tb) return alert("BB & TB harus diisi");
         const imt = bb / (tb * tb);
-        const nik = document.getElementById('inNIK').value;
         const jk = document.getElementById('jkP').value;
         
         let codes = [];
@@ -187,9 +193,8 @@
         toggleLoad(true);
         const params = new URLSearchParams({
             action: "simpanHistory", 
-            nik: nik, nama: document.getElementById('namaP').value,
-            tgl: document.getElementById('tglP').value, 
-            jk: jk, // KIRIM DATA JENIS KELAMIN
+            nik: document.getElementById('inNIK').value, nama: document.getElementById('namaP').value,
+            tgl: document.getElementById('tglP').value, jk: jk,
             visit: currentVisit, diagMedis: document.getElementById('diagP').value,
             bb: bb, tb: document.getElementById('inTB').value, imt: imt.toFixed(1),
             asupan: document.getElementById('inAsup').value, 
@@ -203,11 +208,11 @@
     function renderReport(imt, codes, jk) {
         document.getElementById('namaAhliGizi').innerText = currentNutritionist;
         document.getElementById('waktuCetak').innerText = new Date().toLocaleString('id-ID');
-        document.getElementById('hasilPasien').innerHTML = `<b>NIK:</b> ${document.getElementById('inNIK').value} | <b>Nama:</b> ${document.getElementById('namaP').value}<br><b>JK:</b> ${jk} | <b>Kunjungan Ke:</b> ${currentVisit} | <b>IMT:</b> ${imt.toFixed(1)}`;
+        document.getElementById('hasilPasien').innerHTML = `<b>NIK:</b> ${document.getElementById('inNIK').value} | <b>Nama:</b> ${document.getElementById('namaP').value}<br><b>Jenis Kelamin:</b> ${jk} | <b>Kunjungan:</b> ${currentVisit} | <b>IMT:</b> ${imt.toFixed(1)}`;
         let h = "";
         codes.forEach(k => {
             const p = DB.master_diagnosa_pes.find(x => x.kode === k);
-            if(p) h += `<div class="p-3 border-start border-4 border-success bg-light mb-2 small shadow-sm rounded-end"><b>${p.kode}: ${p['problem (p)']}</b><p class="mb-0 mt-1">E: ${p['etiologi (e)']} | S: ${p['signs_symptoms (s)']}</p></div>`;
+            if(p) h += `<div class="p-3 border-start border-4 border-success bg-light mb-2 small shadow-sm"><b>${p.kode}: ${p['problem (p)']}</b><p class="mb-0 mt-1">E: ${p['etiologi (e)']} | S: ${p['signs_symptoms (s)']}</p></div>`;
         });
         document.getElementById('hasilPES').innerHTML = h || "Hasil Normal.";
         show('stepHasil');
@@ -215,7 +220,7 @@
 
     function saveAndPrint() {
         const n = document.getElementById('namaP').value || "Pasien";
-        document.title = "NCPofDA_" + n; // Format simpan sesuai request
+        document.title = "NCPofDA_" + n;
         window.print();
     }
     function show(id) { document.querySelectorAll('.wizard-step').forEach(s => s.style.display="none"); document.getElementById(id).style.display="block"; window.scrollTo(0,0); }
