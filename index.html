@@ -3,38 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NCP of DA - Expert System</title>
+    <title>NCP of DA - Professional Expert System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         :root { --teal-dark: #00695c; --teal-light: #00897b; --orange: #ff9800; --bg-soft: #f8fbfb; }
-        body { background: var(--bg-soft); font-family: 'Inter', sans-serif; color: #444; }
+        body { background: var(--bg-soft); font-family: 'Inter', sans-serif; color: #444; overflow-x: hidden; }
         
-        /* LOGIN RESPONSIVE */
+        /* LOGIN REDESIGN - RESPONSIVE */
         .login-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 15px; }
-        .login-card { max-width: 900px; width: 100%; background: white; border-radius: 30px; overflow: hidden; display: flex; flex-wrap: wrap; box-shadow: 0 20px 60px rgba(0,0,0,0.06); }
-        .login-left { background: #ffffff; padding: 40px; flex: 1; min-width: 300px; border-right: 1px solid #f0f0f0; display: flex; flex-direction: column; justify-content: center; }
+        .login-card { max-width: 950px; width: 100%; background: white; border-radius: 30px; overflow: hidden; display: flex; flex-wrap: wrap; box-shadow: 0 20px 60px rgba(0,0,0,0.06); }
+        .login-left { background: #ffffff; padding: 40px; flex: 1.2; min-width: 300px; border-right: 1px solid #f0f0f0; display: flex; flex-direction: column; justify-content: center; }
         .login-right { background: #fafdfc; padding: 40px; flex: 1; min-width: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        .brand-title { font-size: 2.5rem; font-weight: 800; color: var(--teal-dark); margin-bottom: 5px; }
+        .brand-title { font-size: clamp(2.2rem, 5vw, 3rem); font-weight: 800; color: var(--teal-dark); line-height: 1.1; margin-bottom: 10px; }
         .brand-title span { color: var(--orange); }
-        .app-logo-right { width: 90px; margin-bottom: 20px; }
+        .app-logo-right { width: 100px; margin-bottom: 25px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
         
-        .input-custom { background: #f1f5f4 !important; border: none !important; border-radius: 15px !important; padding: 12px 20px !important; font-size: 0.95rem; }
-        .btn-login { background: var(--orange); color: white; border: none; border-radius: 15px; padding: 12px; font-weight: 700; width: 100%; margin-top: 10px; box-shadow: 0 8px 15px rgba(255,152,0,0.2); }
+        .input-custom { background: #f1f5f4 !important; border: none !important; border-radius: 15px !important; padding: 12px 20px !important; width: 100%; font-size: 0.95rem; }
+        .btn-login { background: var(--orange); color: white; border: none; border-radius: 15px; padding: 12px; font-weight: 700; width: 100%; margin-top: 15px; transition: 0.3s; box-shadow: 0 8px 15px rgba(255,152,0,0.2); }
 
-        /* CONTENT */
-        .wizard-step { display: none; background: white; border-radius: 25px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 20px; animation: fadeIn 0.4s ease; }
-        .section-title { font-weight: 800; color: var(--teal-dark); margin-bottom: 20px; border-left: 5px solid var(--orange); padding-left: 12px; }
+        /* WIZARD & CONTENT */
+        .wizard-step { display: none; background: white; border-radius: 25px; padding: clamp(20px, 5vw, 40px); box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 20px; animation: fadeIn 0.4s ease; }
+        .section-title { font-weight: 800; color: var(--teal-dark); margin-bottom: 20px; border-left: 5px solid var(--orange); padding-left: 12px; font-size: 1.25rem; }
         
-        /* NOTIF */
-        #customAlert { display: none; position: fixed; top: 20px; right: 20px; left: 20px; z-index: 11000; padding: 15px; border-radius: 15px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-left: 6px solid var(--orange); max-width: 400px; margin: auto; }
+        /* CUSTOM NOTIF */
+        #customAlert { display: none; position: fixed; top: 20px; right: 20px; left: 20px; z-index: 11000; padding: 15px; border-radius: 15px; background: white; box-shadow: 0 10px 40px rgba(0,0,0,0.2); border-left: 6px solid var(--orange); max-width: 400px; margin: auto; animation: slideIn 0.4s ease; }
         
         #loader { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; }
 
+        @keyframes slideIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 768px) { .login-left { text-align: center; border-right: none; border-bottom: 1px solid #f0f0f0; } }
-        @media print { .no-print { display: none !important; } .wizard-step { box-shadow: none; padding: 0; } }
+        
+        @media (max-width: 768px) { .login-left { text-align: center; align-items: center; border-right: none; border-bottom: 1px solid #f0f0f0; } }
+        @media print { .no-print { display: none !important; } .wizard-step { box-shadow: none; padding: 0; } body { background: white; } }
     </style>
 </head>
 <body>
@@ -43,98 +45,114 @@
 
 <div id="loader">
     <div class="spinner-border text-success mb-2"></div>
-    <span class="small fw-bold text-teal-dark">Memuat Data...</span>
+    <span class="small fw-bold text-teal-dark">Sinkronisasi Data...</span>
 </div>
 
 <div class="container py-3">
     <div id="navArea" class="mb-3 text-end no-print" style="display:none; max-width: 800px; margin: auto;">
-        <span class="small text-muted me-2">Petugas: <strong id="userNameDisplay"></strong></span>
-        <button onclick="doLogout()" class="btn btn-sm btn-link text-danger text-decoration-none">Keluar</button>
+        <span class="small text-muted me-2"><i class="bi bi-person-circle"></i> <strong id="userNameDisplay"></strong></span>
+        <button onclick="doLogout()" class="btn btn-sm btn-outline-danger border-0 rounded-pill">Logout</button>
     </div>
 
     <div id="stepLogin" class="login-wrapper">
         <div class="login-card">
             <div class="login-left">
                 <h1 class="brand-title">NCP <span>of DA</span></h1>
-                <p class="text-muted small">Sistem Pakar Proses Asuhan Gizi Terstandar.</p>
+                <p class="text-muted fs-5">Digital Nutrition Care Process & Expert System.</p>
+                <hr class="w-25">
                 <div class="d-flex align-items-center mt-3">
-                    <img src="FotoProfil.jpg" style="width:45px; height:45px; border-radius:50%; margin-right:12px; object-fit: cover;" onerror="this.src='https://via.placeholder.com/45'">
-                    <div class="text-start"><p class="mb-0 fw-bold small">Dian Agnesia</p></div>
+                    <img src="FotoProfil.jpg" style="width:50px; height:50px; border-radius:50%; margin-right:15px; object-fit: cover;" onerror="this.src='https://via.placeholder.com/50'">
+                    <div class="text-start"><p class="mb-0 fw-bold">Dian Agnesia</p><p class="small text-muted mb-0">Expert System Dev</p></div>
                 </div>
             </div>
             <div class="login-right">
                 <img src="logo_NCPDA.png" class="app-logo-right" alt="Logo" onerror="this.style.display='none'">
-                <input type="text" id="user" class="form-control input-custom mb-2" placeholder="Username">
-                <input type="password" id="pass" class="form-control input-custom mb-3" placeholder="Password">
-                <button onclick="doLogin()" class="btn-login">MASUK</button>
+                <input type="text" id="user" class="form-control input-custom mb-3" placeholder="Username">
+                <input type="password" id="pass" class="form-control input-custom mb-4" placeholder="Password">
+                <button onclick="doLogin()" class="btn-login">SIGN IN</button>
             </div>
         </div>
     </div>
 
     <div id="appBody" style="display:none; max-width: 800px; margin: auto;">
+        
         <div id="stepPasien" class="wizard-step">
-            <h4 class="section-title">Identitas Pasien</h4>
+            <h4 class="section-title">Data Pasien</h4>
             <div class="input-group mb-4">
-                <input type="text" id="inNIK" class="form-control bg-light border-0 rounded-start-4" placeholder="NIK (16 Digit)">
-                <button onclick="cekNIK()" class="btn btn-dark rounded-end-4 px-3">Cek</button>
+                <input type="text" id="inNIK" class="form-control bg-light border-0 rounded-start-4" placeholder="Input NIK 16 Digit">
+                <button onclick="cekNIK()" class="btn btn-dark rounded-end-4 px-3">CARI</button>
             </div>
             <div class="row g-2">
                 <div class="col-12"><input type="text" id="namaP" class="form-control input-custom" placeholder="Nama Lengkap"></div>
-                <div class="col-6"><label class="small text-muted">Lahir</label><input type="date" id="tglP" class="form-control input-custom"></div>
+                <div class="col-6"><label class="small text-muted">Tanggal Lahir</label><input type="date" id="tglP" class="form-control input-custom"></div>
                 <div class="col-6"><label class="small text-muted">Gender</label>
-                    <select id="jkP" class="form-select input-custom"><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select>
+                    <select id="jkP" class="form-select input-custom">
+                        <option value="Laki-laki">Laki-laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                    </select>
                 </div>
-                <div class="col-12"><textarea id="diagP" class="form-control input-custom" placeholder="Diagnosa Medis" rows="2"></textarea></div>
+                <div class="col-12"><textarea id="diagP" class="form-control input-custom" placeholder="Diagnosa Medis Dokter" rows="2"></textarea></div>
             </div>
-            <button onclick="show('stepAssess')" class="btn btn-dark w-100 mt-4 rounded-pill py-3 fw-bold">LANJUT</button>
+            <button onclick="show('stepAssess')" class="btn btn-dark w-100 mt-5 rounded-pill py-3 fw-bold">LANJUT ASESMEN</button>
         </div>
 
         <div id="stepAssess" class="wizard-step">
-            <h4 class="section-title">Asesmen Gizi</h4>
+            <h4 class="section-title">Nutrition Assessment</h4>
             <div class="row g-2">
                 <div class="col-6"><label class="small fw-bold">BB (kg)</label><input type="number" id="inBB" class="form-control input-custom"></div>
                 <div class="col-6"><label class="small fw-bold">TB (cm)</label><input type="number" id="inTB" class="form-control input-custom"></div>
-                <div class="col-12 mt-2"><label class="small fw-bold">Asupan: <span id="valAsup">100</span>%</label>
+                <div class="col-12 mt-2"><label class="small fw-bold">Asupan Energi: <span id="valAsup">100</span>%</label>
                     <input type="range" id="inAsup" class="form-range" min="0" max="150" value="100" oninput="document.getElementById('valAsup').innerText=this.value">
                 </div>
-                <div class="col-12 mt-3"><label class="small fw-bold text-muted mb-2">Data Biokimia</label><div class="row row-cols-2 g-2" id="labContainer"></div></div>
-                <div class="col-12 mt-3"><label class="small fw-bold text-muted mb-2">Fisik/Klinis</label><div id="listFisik" class="row row-cols-2 g-2"></div></div>
+                <div class="col-12 mt-4"><label class="small fw-bold text-muted mb-2">Data Biokimia</label>
+                    <div class="row row-cols-2 row-cols-md-3 g-2" id="labContainer"></div>
+                </div>
+                <div class="col-12 mt-4"><label class="small fw-bold text-muted mb-2">Fisik & Klinis</label>
+                    <div id="listFisik" class="row row-cols-2 g-2"></div>
+                </div>
             </div>
-            <button onclick="prosesPES()" class="btn btn-success w-100 mt-4 rounded-pill py-3 fw-bold">SIMPAN & LIHAT PES</button>
+            <button onclick="prosesPES()" class="btn btn-success w-100 mt-5 rounded-pill py-3 fw-bold shadow">SIMPAN & LIHAT LAPORAN</button>
         </div>
 
         <div id="stepHasil" class="wizard-step">
             <div id="cetakArea">
                 <center>
-                    <img src="logo_NCPDA.png" style="width:60px;" onerror="this.style.display='none'">
-                    <h5 class="fw-bold mt-2">NUTRITION CARE REPORT</h5>
+                    <img src="logo_NCPDA.png" style="width:65px;" onerror="this.style.display='none'">
+                    <h5 class="fw-bold mt-2 mb-0">NUTRITION CARE REPORT</h5>
+                    <p class="small text-muted mb-4">NCP of DA Expert System</p>
                 </center>
-                <div id="hasilPasien" class="p-3 bg-light rounded-4 small border my-3"></div>
-                <h6 class="fw-bold border-bottom pb-2">DIAGNOSA GIZI (PES)</h6>
+                
+                <div id="hasilPasien" class="p-3 bg-light rounded-4 small border mb-3"></div>
+                
+                <div class="mb-3 p-3 border-start border-4 border-primary bg-light rounded-end shadow-sm">
+                    <h6 class="fw-bold mb-1 small text-primary text-uppercase">Diagnosa Medis (Dokter):</h6>
+                    <p id="hasilDiagMedis" class="mb-0 small fw-bold text-dark"></p>
+                </div>
+
+                <h6 class="fw-bold border-bottom pb-2 mt-4">DIAGNOSA GIZI (PES):</h6>
                 <div id="hasilPES"></div>
-                <div class="row mt-4 small">
-                    <div class="col-6 text-muted">Tanggal: <br><strong id="waktuCetak"></strong></div>
-                    <div class="col-6 text-end">Ahli Gizi,<br><br><br><strong id="namaAhliGizi"></strong></div>
+                
+                <div class="row mt-5 small">
+                    <div class="col-7 text-muted">Tanggal Periksa: <br><strong id="waktuCetak"></strong></div>
+                    <div class="col-5 text-end">Ahli Gizi,<br><br><br><strong id="namaAhliGizi"></strong></div>
                 </div>
             </div>
-            <button onclick="saveAndPrint()" class="btn btn-primary w-100 mt-4 rounded-pill py-3 no-print">CETAK (PDF)</button>
-            <button onclick="location.reload()" class="btn btn-link w-100 mt-1 text-muted no-print text-decoration-none">Input Pasien Baru</button>
+            <button onclick="saveAndPrint()" class="btn btn-primary w-100 mt-4 rounded-pill py-3 no-print">SIMPAN PDF</button>
+            <button onclick="location.reload()" class="btn btn-link w-100 mt-1 text-muted no-print text-decoration-none small">Input Pasien Baru</button>
         </div>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyiAcMYSyf6kl30_5Cki9zBRnLZnD1wuBlyKVI0z4i7QV31B6wPDUd-XdGtDlDS9j8/exec"; // <--- Masukkan URL Google Script Anda di sini!
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyiAcMYSyf6kl30_5Cki9zBRnLZnD1wuBlyKVI0z4i7QV31B6wPDUd-XdGtDlDS9j8/exec"; 
     let DB = null, currentNutritionist = "", currentVisit = 1;
 
-    // Menangani Sesi Login
+    // --- SESSION GUARD & INITIALIZATION ---
     window.onload = () => {
-        const saved = localStorage.getItem('ncp_user');
-        if (saved && SCRIPT_URL !== "URL_DEPLOY_ANDA") {
-            currentNutritionist = saved;
+        const savedUser = localStorage.getItem('ncp_user');
+        if (savedUser && SCRIPT_URL !== "GANTI_DENGAN_URL_DEPLOY_ANDA") {
+            currentNutritionist = savedUser;
             loadDatabase();
-        } else if (SCRIPT_URL === "URL_DEPLOY_ANDA") {
-            console.log("URL Script belum diset.");
         }
     };
 
@@ -149,18 +167,18 @@
             document.getElementById('navArea').style.display = "block";
             document.getElementById('appBody').style.display = "block";
             show('stepPasien');
-        } catch (e) {
-            notify("Koneksi gagal. Cek URL Script!");
+            notify("Database Sinkron!");
+        } catch(e) { 
+            notify("Gagal Sinkron. Cek URL Deployment!"); 
             localStorage.removeItem('ncp_user');
         }
         toggleLoad(false);
     }
 
+    // --- CORE LOGIC ---
     async function doLogin() {
         const u = document.getElementById('user').value, p = document.getElementById('pass').value;
-        if(!u || !p) return notify("Isi User & Pass");
-        if(SCRIPT_URL === "URL_DEPLOY_ANDA") return notify("Web App belum di-deploy!");
-        
+        if(!u || !p) return notify("Lengkapi Akun!");
         toggleLoad(true);
         try {
             const res = await fetch(`${SCRIPT_URL}?action=login&user=${u}&pass=${p}`).then(r => r.json());
@@ -168,7 +186,7 @@
                 currentNutritionist = res.name;
                 localStorage.setItem('ncp_user', res.name);
                 loadDatabase();
-            } else { notify("Login Gagal!"); toggleLoad(false); }
+            } else { notify("Akses Ditolak!"); toggleLoad(false); }
         } catch(e) { notify("Error Server."); toggleLoad(false); }
     }
 
@@ -185,8 +203,8 @@
                 document.getElementById('tglP').value = res.tglLahir;
                 document.getElementById('jkP').value = res.jk;
                 currentVisit = res.kunjunganKe;
-                notify(`Pasien ditemukan (Kunjungan ke-${res.kunjunganKe})`);
-            } else { currentVisit = 1; notify("Pasien baru."); }
+                notify(`Pasien Lama (Visit #${res.kunjunganKe})`);
+            } else { currentVisit = 1; notify("Data Pasien Baru"); }
         } catch(e) { notify("Error Cek NIK."); }
         toggleLoad(false);
     }
@@ -195,9 +213,9 @@
         let lb = ""; 
         const paramsUnik = [...new Set(DB.logika_biokimia.map(i => i.parameter))];
         paramsUnik.forEach(p => {
-            lb += `<div class="col"><div class="p-2 border rounded bg-white small">
+            lb += `<div class="col"><div class="p-2 border rounded bg-white small shadow-sm">
                    <label class="fw-bold d-block text-muted" style="font-size:9px">${p}</label>
-                   <input type="number" class="form-control form-control-sm border-0 in-lab" data-param="${p}">
+                   <input type="number" class="form-control form-control-sm border-0 p-0 in-lab" data-param="${p}">
                    </div></div>`;
         });
         document.getElementById('labContainer').innerHTML = lb;
@@ -214,7 +232,7 @@
 
     async function prosesPES() {
         const bb = parseFloat(document.getElementById('inBB').value), tb = parseFloat(document.getElementById('inTB').value)/100;
-        if(!bb || !tb) return notify("Lengkapi BB/TB");
+        if(!bb || !tb) return notify("BB/TB wajib diisi!");
         
         const imt = bb / (tb * tb);
         const jk = document.getElementById('jkP').value;
@@ -238,32 +256,44 @@
         });
 
         toggleLoad(true);
+        const finalCodes = [...new Set(codes)];
         const params = new URLSearchParams({
             action: "simpanHistory", nik: document.getElementById('inNIK').value, 
             nama: document.getElementById('namaP').value, tgl: document.getElementById('tglP').value, 
             jk: jk, visit: currentVisit, diagMedis: document.getElementById('diagP').value,
             bb: bb, tb: document.getElementById('inTB').value, imt: imt.toFixed(1),
             asupan: document.getElementById('inAsup').value, biokimia: sBio.join(", "),
-            fisik: sFisik.join(", "), pes: [...new Set(codes)].join(", "), ahli: currentNutritionist
+            fisik: sFisik.join(", "), pes: finalCodes.join(", "), ahli: currentNutritionist
         });
 
         try {
             await fetch(`${SCRIPT_URL}?${params.toString()}`);
-            renderReport(imt, [...new Set(codes)], jk);
-        } catch(e) { notify("Gagal Simpan."); }
+            renderReport(imt, finalCodes, jk);
+            notify("Data Berhasil Disimpan.");
+        } catch(e) { notify("Gagal simpan ke Cloud."); }
         toggleLoad(false);
     }
 
     function renderReport(imt, codes, jk) {
         document.getElementById('namaAhliGizi').innerText = currentNutritionist;
         document.getElementById('waktuCetak').innerText = new Date().toLocaleString('id-ID');
-        document.getElementById('hasilPasien').innerHTML = `<b>NIK:</b> ${document.getElementById('inNIK').value} | <b>Nama:</b> ${document.getElementById('namaP').value}<br><b>JK:</b> ${jk} | <b>IMT:</b> ${imt.toFixed(1)}`;
+        document.getElementById('hasilDiagMedis').innerText = document.getElementById('diagP').value || "-";
+        
+        document.getElementById('hasilPasien').innerHTML = `
+            <b>NIK:</b> ${document.getElementById('inNIK').value} | <b>Nama:</b> ${document.getElementById('namaP').value}<br>
+            <b>Gender:</b> ${jk} | <b>Kunjungan Ke:</b> ${currentVisit} | <b>IMT:</b> ${imt.toFixed(1)}
+        `;
+        
         let h = "";
         codes.forEach(k => {
             const p = DB.master_diagnosa_pes.find(x => x.kode === k);
-            if(p) h += `<div class="p-3 border-start border-3 border-success bg-white mb-2 small shadow-sm"><b>${p.kode}: ${p['problem (p)']}</b><p class="mb-0 x-small text-muted">E: ${p['etiologi (e)']} | S: ${p['signs_symptoms (s)']}</p></div>`;
+            if(p) h += `
+                <div class="p-3 border-start border-4 border-success bg-white mb-2 small shadow-sm rounded-end">
+                    <b class="text-success">${p.kode}: ${p['problem (p)']}</b>
+                    <p class="mb-0 x-small text-muted mt-1"><b>E:</b> ${p['etiologi (e)']} | <b>S:</b> ${p['signs_symptoms (s)']}</p>
+                </div>`;
         });
-        document.getElementById('hasilPES').innerHTML = h || "Hasil Normal.";
+        document.getElementById('hasilPES').innerHTML = h || "Normal.";
         show('stepHasil');
     }
 
@@ -272,14 +302,20 @@
         window.print();
     }
 
+    // --- UI HELPERS ---
     function notify(msg) {
         const box = document.getElementById('customAlert');
         document.getElementById('alertMsg').innerText = msg;
         box.style.display = 'block';
-        setTimeout(() => box.style.display = 'none', 3000);
+        setTimeout(() => box.style.display = 'none', 3500);
     }
-    function show(id) { document.querySelectorAll('.wizard-step').forEach(s => s.style.display="none"); document.getElementById(id).style.display="block"; }
+    function show(id) { document.querySelectorAll('.wizard-step').forEach(s => s.style.display="none"); document.getElementById(id).style.display="block"; window.scrollTo(0,0); }
     function toggleLoad(s) { document.getElementById('loader').style.display=s?'flex':'none'; }
+    
+    // Prevent data loss on accidental reload
+    window.onbeforeunload = function() {
+        if(document.getElementById('appBody').style.display === 'block') return "Input belum disimpan!";
+    };
 </script>
 </body>
 </html>
