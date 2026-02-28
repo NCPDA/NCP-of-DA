@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NCP of DA - Professional System</title>
+    <title>NCP of DA - Professional Expert System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root { --teal: #00897b; --orange: #ff9800; }
@@ -13,6 +13,7 @@
         .btn-main { background: var(--orange); color: white; border-radius: 30px; font-weight: bold; border: none; padding: 12px 30px; }
         #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
         .lab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .italic { font-style: italic; }
         @media print { .no-print { display: none !important; } .wizard-step { box-shadow: none; margin-top: 0; padding: 0; } }
     </style>
 </head>
@@ -68,21 +69,28 @@
     </div>
 
     <div id="stepHasil" class="wizard-step">
-        <div id="cetakArea" class="p-4">
+        <div id="cetakArea" class="p-4 border rounded bg-white shadow-sm">
             <center>
                 <img src="logo_NCPDA.png" width="100" class="mb-2">
                 <h5 class="fw-bold">NUTRITION CARE REPORT</h5>
             </center>
             <hr>
             <div id="hasilPasien" class="mb-4"></div>
+            
             <div id="hasilPES"></div>
-            <div class="mt-4 text-end small">
-                <p class="mb-0">Ahli Gizi,</p>
-                <br><br>
-                <p class="fw-bold" id="namaAhliGizi"></p>
+            
+            <div class="row mt-4 small">
+                <div class="col-7 text-muted italic">
+                    Dicetak pada: <span id="waktuCetak"></span>
+                </div>
+                <div class="col-5 text-end">
+                    <p class="mb-0">Ahli Gizi,</p>
+                    <br><br>
+                    <p class="fw-bold mb-0" id="namaAhliGizi"></p>
+                </div>
             </div>
         </div>
-        <div class="row g-2 no-print">
+        <div class="row g-2 mt-4 no-print">
             <div class="col-6"><button onclick="window.print()" class="btn btn-primary w-100 rounded-pill">PRINT PDF</button></div>
             <div class="col-6"><button onclick="goHome()" class="btn btn-secondary w-100 rounded-pill">INPUT BARU</button></div>
         </div>
@@ -90,11 +98,13 @@
 </div>
 
 <script>
+    // MASUKKAN URL EXEC ANDA DI SINI
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUJLDqArdDBWrGJZKK_aAcSHuiUx36qvYShNm75PwR9J4St7fMYXgLd-9XjL7mJIw/exec"; 
     let DB = null;
     let currentNutritionist = "";
 
     function getInitial(name) {
+        if(!name) return "P.N";
         return name.split(' ').map(n => n[0].toUpperCase() + ".").join("");
     }
 
@@ -115,13 +125,12 @@
                 renderAssessmentInputs();
                 document.getElementById('navArea').style.display = "block";
                 show('stepPasien');
-            } else { alert("Gagal Login!"); }
+            } else { alert("Login Gagal!"); }
         } catch(e) { alert("Error Koneksi!"); }
         toggleLoad(false);
     }
 
     function renderAssessmentInputs() {
-        // Biokimia Kumulatif
         let labHtml = "";
         const params = [...new Set(DB.logika_biokimia.map(item => item.parameter))];
         params.forEach(p => {
@@ -129,7 +138,6 @@
         });
         document.getElementById('labContainer').innerHTML = labHtml;
 
-        // Fisik Klinis
         let fisHtml = "";
         DB.logika_fisik_klinis.forEach((item, i) => {
             if(item.gejala) fisHtml += `<div class="col-6 mb-1 small"><div class="form-check"><input class="form-check-input chk-fisik" type="checkbox" value="${item.gejala}" id="f${i}"><label class="form-check-label" for="f${i}">${item.gejala}</label></div></div>`;
@@ -149,10 +157,10 @@
         const imt = bb / (tb * tb), asup = parseFloat(document.getElementById('inAsup').value);
         let codes = [];
 
+        // Diagnosa hanya muncul jika tidak normal
         if(imt < 18.5) codes.push("NC-3.1");
         else if(imt > 25) codes.push("NC-3.3");
 
-        // Analisa Biokimia
         document.querySelectorAll('.in-lab').forEach(input => {
             const val = parseFloat(input.value);
             const param = input.dataset.param;
@@ -168,6 +176,8 @@
         });
 
         if(asup < 80) codes.push("NI-1.2");
+        else if(asup > 120) codes.push("NI-1.3");
+
         document.querySelectorAll('.chk-fisik:checked').forEach(c => {
             const m = DB.logika_fisik_klinis.find(x => x.gejala === c.value);
             if(m) codes.push(m.kode_diagnosa);
@@ -179,7 +189,11 @@
     function renderReport(imt, codes) {
         const inisial = getInitial(document.getElementById('namaP').value);
         const usia = hitungUsia(document.getElementById('tglP').value);
-        document.getElementById('namaAhliGizi').innerText = currentNutritionist; // Menampilkan nama dari login
+        
+        document.getElementById('namaAhliGizi').innerText = currentNutritionist;
+        const sekarang = new Date();
+        const opsiWaktu = { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+        document.getElementById('waktuCetak').innerText = sekarang.toLocaleDateString('id-ID', opsiWaktu);
 
         document.getElementById('hasilPasien').innerHTML = `
             <table class="table table-sm borderless small">
@@ -189,11 +203,16 @@
             </table>`;
 
         let h = "";
-        codes.forEach(k => {
-            const p = DB.master_diagnosa_pes.find(x => x.kode === k);
-            if(p) h += `<div class="p-2 border-start border-4 border-success bg-light mb-2 small"><h6 class="fw-bold text-success mb-1">${p.kode}: ${p['problem (p)']}</h6><p class="mb-0"><strong>E:</strong> ${p['etiologi (e)']} | <strong>S:</strong> ${p['signs_symptoms (s)']}</p></div>`;
-        });
-        document.getElementById('hasilPES').innerHTML = h || "<p class='text-center'>Tidak ditemukan diagnosa gizi.</p>";
+        if (codes.length > 0) {
+            codes.forEach(k => {
+                const p = DB.master_diagnosa_pes.find(x => x.kode === k);
+                if(p) h += `<div class="p-2 border-start border-4 border-success bg-light mb-2 small shadow-sm"><h6 class="fw-bold text-success mb-1">${p.kode}: ${p['problem (p)']}</h6><p class="mb-0"><strong>E:</strong> ${p['etiologi (e)']} | <strong>S:</strong> ${p['signs_symptoms (s)']}</p></div>`;
+            });
+        } else {
+            h = "<div class='alert alert-info small text-center italic shadow-sm'>Data Asesmen menunjukkan hasil Normal. Tidak ada masalah gizi spesifik yang ditemukan.</div>";
+        }
+        
+        document.getElementById('hasilPES').innerHTML = h;
         show('stepHasil');
     }
 
