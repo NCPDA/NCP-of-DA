@@ -3,152 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NCP of DA - Professional Expert System</title>
+    <title>NCP of DA - Professional System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
-        :root { --teal-dark: #00695c; --teal-light: #00897b; --orange: #ff9800; --bg-soft: #f8fbfb; }
-        body { background: var(--bg-soft); font-family: 'Inter', sans-serif; color: #444; }
+        :root { --teal: #00897b; --orange: #ff9800; --bg: #f8faf9; }
+        body { background: var(--bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
         /* LOGIN PAGE */
-        .login-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .login-card { 
-            max-width: 950px; width: 100%; background: white; border-radius: 40px; overflow: hidden; 
-            display: flex; box-shadow: 0 20px 60px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.03);
+            max-width: 900px; background: white; border-radius: 40px; overflow: hidden; 
+            display: flex; margin: 50px auto; box-shadow: 0 20px 50px rgba(0,0,0,0.05);
         }
-        .login-left { background: #ffffff; padding: 70px; flex: 1.3; border-right: 1px solid #f0f0f0; }
-        .login-right { background: #fafdfc; padding: 70px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .login-left { background: #ffffff; padding: 60px; flex: 1.3; border-right: 1px solid #f0f0f0; }
+        .login-right { background: #fafdfc; padding: 60px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .profile-img { width: 110px; height: 110px; border-radius: 50%; border: 3px solid #8bc34a; object-fit: cover; margin-right: 20px; }
         
-        .profile-img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid #8bc34a; object-fit: cover; margin-right: 20px; }
-        .brand-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; }
-        .brand-title span { color: var(--orange); }
-        .brand-title em { color: var(--teal-light); font-style: normal; }
+        /* STEP WIZARD */
+        .wizard-step { display: none; background: white; border-radius: 30px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-top: 20px; }
+        .active { display: block; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .input-custom { background: #f1f5f4 !important; border: none !important; border-radius: 20px !important; padding: 15px 25px !important; }
-        .btn-login { background: var(--orange); color: white; border-radius: 20px; padding: 15px; font-weight: 700; width: 100%; border: none; transition: 0.3s; box-shadow: 0 10px 20px rgba(255,152,0,0.2); }
-        .btn-login:hover { transform: translateY(-2px); }
-
-        /* WIZARD & LOADER */
-        .wizard-step { display: none; background: white; border-radius: 30px; padding: 40px; box-shadow: 0 15px 40px rgba(0,0,0,0.04); margin-bottom: 30px; }
-        .active { display: block; animation: fadeIn 0.4s ease; }
-        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; justify-content: center; align-items: center; }
+        .btn-main { background: var(--orange); color: white; border-radius: 25px; padding: 12px; font-weight: bold; width: 100%; border: none; transition: 0.3s; }
+        .btn-main:hover { background: #e68a00; transform: translateY(-2px); }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
-        @media (max-width: 992px) { .login-card { flex-direction: column; } }
+        #loader { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; }
+        .lab-card { background: #fdfdfd; border: 1px solid #f1f1f1; border-radius: 15px; padding: 12px; }
+
+        @media (max-width: 992px) { .login-card { flex-direction: column; margin: 20px; } .login-left, .login-right { padding: 40px; } }
         @media print { .no-print { display: none !important; } .wizard-step { box-shadow: none !important; padding: 0 !important; } }
     </style>
 </head>
 <body>
 
-<div id="loader"><div class="spinner-border text-success"></div></div>
+<div id="loader"><div class="spinner-border text-success"></div><p class="mt-3 fw-bold text-success">Sinkronisasi Data...</p></div>
 
-<div class="container">
-    <div id="navArea" class="mt-4 mb-2 text-end no-print" style="display:none; max-width: 800px; margin: auto;">
-        <span class="me-3 small text-muted">User: <strong id="userName" class="text-dark"></strong></span>
+<div class="container" style="max-width: 850px;">
+    <div id="navArea" class="mt-4 text-end no-print" style="display:none;">
+        <span class="me-3 small text-muted">Login as: <strong id="userName"></strong></span>
         <button onclick="location.reload()" class="btn btn-sm btn-outline-danger rounded-pill px-3">Logout</button>
     </div>
 
-    <div id="stepLogin" class="login-wrapper">
-        <div class="login-card">
-            <div class="login-left">
-                <div class="d-flex align-items-center mb-4">
-                    <img src="FotoProfil.png" class="profile-img shadow-sm" onerror="this.src='https://via.placeholder.com/150'">
-                    <div>
-                        <h5 class="fw-bold mb-0">Dian Agnesia</h5>
-                        <p class="text-muted small mb-0">Lecturer of Nutrition</p>
-                    </div>
-                </div>
-                <h1 class="brand-title"><em>NCP</em> <span>of DA</span></h1>
-                <p class="text-muted">Platform digital inovatif untuk mempermudah implementasi <strong>Nutrition Care Process</strong> dalam praktik klinik dan pendidikan gizi secara efisien.</p>
-            </div>
-            <div class="login-right text-center">
-                <img src="logo_NCPDA.png" width="100" class="mb-5 mx-auto" onerror="this.style.display='none'">
-                <div class="text-start w-100">
-                    <input type="text" id="user" class="form-control input-custom mb-3" placeholder="Username">
-                    <input type="password" id="pass" class="form-control input-custom mb-4" placeholder="Password">
-                    <button onclick="doLogin()" class="btn-login">SIGN IN</button>
+    <div id="stepLogin" class="login-card active">
+        <div class="login-left">
+            <div class="d-flex align-items-center mb-4">
+                <img src="FotoProfil.jpg" class="profile-img shadow-sm" alt="Dian Agnesia" onerror="this.src='https://via.placeholder.com/150'">
+                <div>
+                    <h4 class="fw-bold mb-0">Dian Agnesia</h4>
+                    <p class="text-muted small mb-0">Lecturer of Nutrition</p>
                 </div>
             </div>
+            <h1 class="fw-bold text-teal mb-3" style="font-size: 2.8rem; letter-spacing: -1px;">NCP <span style="color:var(--orange)">of DA</span></h1>
+            <p class="text-muted lead" style="font-size: 1rem;">Platform digital terintegrasi untuk mempermudah implementasi <b>Nutrition Care Process</b> secara akurat dan efisien.</p>
+        </div>
+        <div class="login-right">
+            <div class="text-center mb-4"><img src="logo_NCPDA.png" width="90" onerror="this.style.display='none'"></div>
+            <input type="text" id="user" class="form-control mb-3 rounded-pill px-4 py-2" placeholder="Username">
+            <input type="password" id="pass" class="form-control mb-4 rounded-pill px-4 py-2" placeholder="Password">
+            <button onclick="doLogin()" class="btn-main shadow">SIGN IN</button>
         </div>
     </div>
 
-    <div style="max-width: 800px; margin: auto;">
-        <div id="stepPasien" class="wizard-step">
-            <h4 class="fw-bold mb-4">Identitas Pasien</h4>
-            <input type="text" id="namaP" class="form-control form-control-lg mb-3 rounded-4" placeholder="Nama Lengkap">
-            <div class="row mb-3"><div class="col-6"><input type="date" id="tglP" class="form-control"></div><div class="col-6"><select id="jkP" class="form-select"><option>Laki-laki</option><option>Perempuan</option></select></div></div>
-            <textarea id="diagP" class="form-control mb-4" placeholder="Diagnosa Medis" rows="2"></textarea>
-            <button onclick="savePasien()" class="btn btn-dark w-100 py-3 rounded-pill fw-bold">SIMPAN & LANJUT</button>
+    <div id="stepPasien" class="wizard-step">
+        <h4 class="fw-bold mb-4 text-teal border-bottom pb-2">Identitas Pasien</h4>
+        <div class="row g-3">
+            <div class="col-12"><label class="small fw-bold">Nama Lengkap</label><input type="text" id="namaP" class="form-control rounded-3"></div>
+            <div class="col-md-6"><label class="small fw-bold">Tanggal Lahir</label><input type="date" id="tglP" class="form-control rounded-3"></div>
+            <div class="col-md-6"><label class="small fw-bold">Jenis Kelamin</label><select id="jkP" class="form-select rounded-3"><option>Laki-laki</option><option>Perempuan</option></select></div>
+            <div class="col-12"><label class="small fw-bold">Diagnosa Medis</label><textarea id="diagP" class="form-control rounded-3" rows="2"></textarea></div>
         </div>
+        <button onclick="savePasien()" class="btn btn-dark w-100 mt-5 py-3 rounded-pill fw-bold shadow">SIMPAN & LANJUTKAN</button>
+    </div>
 
-        <div id="stepAssess" class="wizard-step">
-            <h4 class="fw-bold mb-4 text-teal-dark">Assessment</h4>
-            <div class="row g-3">
-                <div class="col-6"><input type="number" id="inBB" class="form-control" placeholder="BB (kg)"></div>
-                <div class="col-6"><input type="number" id="inTB" class="form-control" placeholder="TB (cm)"></div>
-                <div class="col-12"><div class="row row-cols-2 g-2" id="labContainer"></div></div>
-                <div class="col-12 mt-3">
-                    <label class="small fw-bold">Asupan Energi: <span id="valAsup">100</span>%</label>
-                    <input type="range" id="inAsup" class="form-range" min="0" max="150" value="100" oninput="document.getElementById('valAsup').innerText=this.value">
-                </div>
-                <div id="listFisik" class="row mt-3"></div>
+    <div id="stepAssess" class="wizard-step">
+        <h4 class="fw-bold mb-4 text-teal border-bottom pb-2">Nutrition Assessment</h4>
+        <div class="row g-3">
+            <div class="col-6"><div class="lab-card"><label class="small fw-bold d-block">BB (kg)</label><input type="number" id="inBB" class="form-control border-0 bg-transparent p-0"></div></div>
+            <div class="col-6"><div class="lab-card"><label class="small fw-bold d-block">TB (cm)</label><input type="number" id="inTB" class="form-control border-0 bg-transparent p-0"></div></div>
+            <div class="col-12"><label class="fw-bold small text-muted mt-2 mb-2 text-uppercase">Data Laboratorium (Biokimia)</label><div class="row row-cols-2 g-2" id="labContainer"></div></div>
+            <div class="col-12 mt-3">
+                <label class="small fw-bold">Asupan Energi: <span id="valAsup" class="text-success">100</span>%</label>
+                <input type="range" id="inAsup" class="form-range" min="0" max="150" value="100" oninput="document.getElementById('valAsup').innerText=this.value">
             </div>
-            <button onclick="prosesPES()" class="btn btn-success w-100 mt-4 py-3 rounded-pill fw-bold">GENERATE REPORT</button>
+            <div class="col-12"><label class="fw-bold small text-muted mt-2 mb-2 text-uppercase">Fisik & Klinis</label><div id="listFisik" class="row gx-2 small"></div></div>
         </div>
+        <button onclick="prosesPES()" class="btn btn-success w-100 mt-5 py-3 rounded-pill fw-bold shadow">GENERATE PES REPORT</button>
+    </div>
 
-        <div id="stepHasil" class="wizard-step">
-            <div id="cetakArea">
-                <center><img src="logo_NCPDA.png" width="80" class="mb-2"><h5 class="fw-bold">NUTRITION CARE REPORT</h5></center>
-                <hr>
-                <div id="hasilPasien" class="mb-3 small p-3 bg-light rounded-4"></div>
-                <div id="hasilPES"></div>
-                <div class="row mt-4 small">
-                    <div class="col-7 text-muted italic">Dicetak pada: <br><strong id="waktuCetak"></strong></div>
-                    <div class="col-5 text-end">Ahli Gizi Pemeriksa,<br><br><strong id="namaAhliGizi"></strong></div>
-                </div>
+    <div id="stepHasil" class="wizard-step">
+        <div id="cetakArea" class="p-2">
+            <div class="text-center mb-4">
+                <img src="logo_NCPDA.png" width="85" class="mb-2">
+                <h5 class="fw-bold mb-0">NUTRITION CARE REPORT</h5>
+                <hr style="border: 1px solid #000; opacity: 1;">
             </div>
-            <button onclick="window.print()" class="btn btn-primary w-100 mt-4 rounded-pill no-print py-2">CETAK PDF</button>
-            <button onclick="goHome()" class="btn btn-outline-secondary w-100 mt-2 rounded-pill no-print border-0">Input Baru</button>
+            <div id="hasilPasien" class="mb-4 p-3 bg-light rounded-4 small border"></div>
+            <div id="hasilPES"></div>
+            <div class="row mt-5 small">
+                <div class="col-7 text-muted italic">Dicetak pada: <br><strong id="waktuCetak"></strong></div>
+                <div class="col-5 text-end">Ahli Gizi Pemeriksa,<br><br><br><strong id="namaAhliGizi" class="text-decoration-underline"></strong></div>
+            </div>
+        </div>
+        <div class="row g-2 mt-5 no-print">
+            <div class="col-6"><button onclick="window.print()" class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm">PRINT PDF</button></div>
+            <div class="col-6"><button onclick="goHome()" class="btn btn-outline-secondary w-100 rounded-pill py-2 shadow-sm">INPUT BARU</button></div>
         </div>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUJLDqArdDBWrGJZKK_aAcSHuiUx36qvYShNm75PwR9J4St7fMYXgLd-9XjL7mJIw/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUJLDqArdDBWrGJZKK_aAcSHuiUx36qvYShNm75PwR9J4St7fMYXgLd-9XjL7mJIw/exec"; 
     let DB = null, currentNutritionist = "";
 
     async function doLogin() {
         const u = document.getElementById('user').value, p = document.getElementById('pass').value;
-        if(!u || !p) return;
+        if(!u || !p) return alert("Kredensial tidak lengkap!");
         toggleLoad(true);
         try {
-            const [res, data] = await Promise.all([
-                fetch(`${SCRIPT_URL}?action=login&user=${u}&pass=${p}`).then(r => r.json()),
-                fetch(SCRIPT_URL).then(r => r.json())
-            ]);
+            // Urutan pemuatan yang lebih stabil: Login -> Ambil Data
+            const res = await fetch(`${SCRIPT_URL}?action=login&user=${u}&pass=${p}`).then(r => r.json());
             if(res.status === "success") {
                 currentNutritionist = res.name;
+                const data = await fetch(SCRIPT_URL).then(r => r.json());
                 DB = data;
                 renderInputs();
                 document.getElementById('userName').innerText = res.name;
                 document.getElementById('navArea').style.display = "block";
                 document.getElementById('stepLogin').style.display = "none";
                 show('stepPasien');
-            } else { alert("Login Gagal!"); }
-        } catch(e) { alert("Error database."); }
+            } else { alert("Login Gagal! Periksa kembali Username/Password."); }
+        } catch(e) { alert("Masalah koneksi ke Google Sheets. Pastikan Script sudah di-deploy."); }
         toggleLoad(false);
     }
 
     function renderInputs() {
         let labH = "";
         [...new Set(DB.logika_biokimia.map(i => i.parameter))].forEach(p => {
-            if(p) labH += `<div class="col"><div class="p-2 border rounded bg-white"><label style="font-size:9px" class="fw-bold d-block text-uppercase text-muted">${p}</label><input type="number" class="form-control form-control-sm border-0 p-0 in-lab" data-param="${p}"></div></div>`;
+            if(p) labH += `<div class="col"><div class="lab-card shadow-sm"><label style="font-size:9px" class="fw-bold d-block text-muted text-uppercase">${p}</label><input type="number" class="form-control form-control-sm border-0 bg-transparent p-0 in-lab" data-param="${p}"></div></div>`;
         });
         document.getElementById('labContainer').innerHTML = labH;
 
         let fisH = "";
         DB.logika_fisik_klinis.forEach((item, i) => {
-            if(item.gejala) fisH += `<div class="col-6 mb-1 small"><div class="form-check"><input class="form-check-input chk-fisik" type="checkbox" value="${item.gejala}" id="f${i}"><label class="form-check-label" for="f${i}">${item.gejala}</label></div></div>`;
+            if(item.gejala) fisH += `<div class="col-6 mb-1"><div class="form-check"><input class="form-check-input chk-fisik" type="checkbox" value="${item.gejala}" id="f${i}"><label class="form-check-label" for="f${i}">${item.gejala}</label></div></div>`;
         });
         document.getElementById('listFisik').innerHTML = fisH;
     }
@@ -165,7 +161,9 @@
         const bb = parseFloat(document.getElementById('inBB').value), tb = parseFloat(document.getElementById('inTB').value)/100;
         const imt = bb / (tb * tb), asup = parseFloat(document.getElementById('inAsup').value);
         let codes = [];
+
         if(imt < 18.5) codes.push("NC-3.1"); else if(imt > 25) codes.push("NC-3.3");
+
         document.querySelectorAll('.in-lab').forEach(input => {
             const val = parseFloat(input.value);
             if(!isNaN(val)) {
@@ -176,27 +174,36 @@
                 });
             }
         });
+
         if(asup < 80) codes.push("NI-1.2"); else if(asup > 120) codes.push("NI-1.3");
-        document.querySelectorAll('.chk-fisik:checked').forEach(c => codes.push(DB.logika_fisik_klinis.find(x => x.gejala === c.value).kode_diagnosa));
+        document.querySelectorAll('.chk-fisik:checked').forEach(c => {
+            const m = DB.logika_fisik_klinis.find(x => x.gejala === c.value);
+            if(m) codes.push(m.kode_diagnosa);
+        });
+        
         renderReport(imt, [...new Set(codes)]);
     }
 
     function renderReport(imt, codes) {
         document.getElementById('namaAhliGizi').innerText = currentNutritionist;
         document.getElementById('waktuCetak').innerText = new Date().toLocaleString('id-ID', {day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit'}) + " WIB";
-        document.getElementById('hasilPasien').innerHTML = `<strong>Pasien:</strong> ${document.getElementById('namaP').value} | <strong>IMT:</strong> ${imt.toFixed(1)} | <strong>Asupan:</strong> ${document.getElementById('inAsup').value}%`;
+        document.getElementById('hasilPasien').innerHTML = `
+            <div class="row"><div class="col-6"><strong>Pasien:</strong> ${document.getElementById('namaP').value}</div><div class="col-6 text-end"><strong>JK:</strong> ${document.getElementById('jkP').value}</div></div>
+            <div class="mt-1"><strong>Diagnosa Medis:</strong> ${document.getElementById('diagP').value}</div>
+            <div class="mt-1"><strong>Status Gizi:</strong> IMT ${imt.toFixed(1)} | <strong>Asupan:</strong> ${document.getElementById('inAsup').value}%</div>`;
+
         let h = "";
         if (codes.length > 0) {
             codes.forEach(k => {
                 const p = DB.master_diagnosa_pes.find(x => x.kode === k);
-                if(p) h += `<div class="p-3 border-start border-4 border-success bg-light mb-2 small shadow-sm rounded-end"><h6 class="fw-bold text-success mb-1">${p.kode}: ${p['problem (p)']}</h6><p class="mb-0"><strong>E:</strong> ${p['etiologi (e)']} | <strong>S:</strong> ${p['signs_symptoms (s)']}</p></div>`;
+                if(p) h += `<div class="p-3 border-start border-4 border-success bg-white mb-2 shadow-sm rounded-end small"><strong>${p.kode}: ${p['problem (p)']}</strong><p class="mb-0 text-muted mt-1">E: ${p['etiologi (e)']} | S: ${p['signs_symptoms (s)']}</p></div>`;
             });
-        } else { h = "<div class='p-3 text-center italic text-muted'>Hasil Asesmen Normal.</div>"; }
+        } else { h = "<div class='p-4 text-center italic text-muted bg-white rounded shadow-sm border'>Hasil Assessment menunjukkan parameter Normal.</div>"; }
         document.getElementById('hasilPES').innerHTML = h;
         show('stepHasil');
     }
 
-    function show(id) { document.querySelectorAll('.wizard-step').forEach(s => s.style.display = "none"); document.getElementById(id).style.display = "block"; }
+    function show(id) { document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
     function goHome() { show('stepPasien'); }
     function toggleLoad(s) { document.getElementById('loader').style.display = s?'flex':'none'; }
 </script>
