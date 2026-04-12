@@ -6,169 +6,243 @@
     <title>NCP of DA - Professional Expert System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --teal-dark: #00695c; --orange: #ff9800; --bg-soft: #f8fbfb; }
-        body { background: var(--bg-soft); font-family: 'Inter', sans-serif; color: #444; }
-        .login-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .login-card { max-width: 400px; width: 100%; background: white; border-radius: 25px; padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); text-align: center; }
-        .wizard-step { display: none; background: white; border-radius: 25px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; animation: fadeIn 0.4s ease; }
-        .input-custom { background: #f1f5f4 !important; border: none !important; border-radius: 12px !important; padding: 12px 15px !important; font-size: 0.9rem; }
-        .section-title { font-weight: 800; color: var(--teal-dark); border-left: 5px solid var(--orange); padding-left: 12px; margin-bottom: 20px; }
-        .history-card { cursor: pointer; transition: 0.3s; border: 1px solid #eee; background: white; border-radius: 15px; margin-bottom: 10px; padding: 15px; }
-        .history-card:hover { background: #f0f7f6; border-color: var(--teal-dark); }
-        .x-small { font-size: 0.75rem; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @media print { .no-print { display: none !important; } .wizard-step { box-shadow: none; padding: 0; } }
+        :root { --teal-primary: #004d40; --teal-light: #00695c; --orange: #ff9800; --soft-bg: #f4f7f6; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--soft-bg); margin: 0; overflow-x: hidden; }
+        
+        /* LOGIN SPLIT LAYOUT */
+        .login-wrapper { display: flex; min-height: 100vh; }
+        
+        .info-side { 
+            flex: 1.2; background: linear-gradient(135deg, var(--teal-primary), var(--teal-light));
+            color: white; padding: 80px; display: flex; flex-direction: column; justify-content: center;
+            position: relative;
+        }
+
+        .brand-logo { font-size: 3rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 40px; }
+        .brand-logo span { color: var(--orange); }
+
+        .profile-card { 
+            display: flex; align-items: center; gap: 20px; 
+            background: rgba(255,255,255,0.1); padding: 20px; 
+            border-radius: 20px; backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;
+            max-width: fit-content;
+        }
+        .profile-card img { 
+            width: 80px; height: 80px; border-radius: 15px; 
+            object-fit: cover; border: 2px solid var(--orange); 
+        }
+        .profile-info h6 { margin: 0; font-weight: 700; color: white; }
+        .profile-info small { color: var(--orange); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+        .app-desc { font-size: 1.1rem; opacity: 0.9; line-height: 1.6; max-width: 500px; }
+
+        .form-side { flex: 0.8; background: white; display: flex; align-items: center; justify-content: center; padding: 40px; }
+        .login-box { width: 100%; max-width: 350px; }
+        .login-box h2 { font-weight: 800; color: var(--teal-primary); margin-bottom: 30px; }
+        
+        .input-custom { 
+            background: #f8fafb !important; border: 2px solid #edf2f7 !important; 
+            border-radius: 15px !important; padding: 15px !important; margin-bottom: 20px;
+        }
+        .btn-login { 
+            background: var(--teal-primary); color: white; border-radius: 15px; 
+            padding: 15px; font-weight: 700; border: none; transition: 0.3s;
+        }
+        .btn-login:hover { background: var(--teal-light); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,77,64,0.2); }
+
+        /* DASHBOARD ELEMENTS */
+        .wizard-step { display: none; background: white; border-radius: 30px; padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.05); animation: slideIn 0.4s ease-out; }
+        .section-title { font-weight: 800; color: var(--teal-primary); border-left: 6px solid var(--orange); padding-left: 20px; margin-bottom: 30px; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 992px) { .info-side { display: none; } }
+        @media print { .no-print { display: none !important; } .wizard-step { box-shadow: none; padding: 0; border: none; } }
     </style>
 </head>
 <body>
 
-<div class="container py-4">
-
+<div id="mainContent">
     <div id="stepLogin" class="login-wrapper">
-        <div class="login-card">
-            <h2 class="fw-bold text-teal-dark mb-1">NCP <span>of DA</span></h2>
-            <p class="small text-muted mb-4">Nutrition Care Process Expert System</p>
-            <input type="text" id="user" class="form-control input-custom mb-2" placeholder="Username">
-            <input type="password" id="pass" class="form-control input-custom mb-4" placeholder="Password">
-            <button onclick="doLogin()" class="btn btn-dark w-100 py-3 rounded-pill fw-bold">MASUK</button>
+        <div class="info-side">
+            <div class="brand-logo">NCP of <span>DA</span></div>
+
+            <div class="profile-card">
+                <img src="FotoProfil.jpg" alt="Dian Agnesia">
+                <div class="profile-info">
+                    <small>Dosen Pembimbing</small>
+                    <h6>Dian Agnesia, S.Gz., M.PH</h6>
+                </div>
+            </div>
+
+            <p class="app-desc">
+                Platform Pakar Diagnosa Gizi Terstandar (NCP) berbasis IDNT 2008 untuk optimasi asuhan gizi klinis dan pemantauan pasien secara berkelanjutan.
+            </p>
+            
+            <div class="mt-5 d-flex gap-4 small opacity-50">
+                <span><i class="bi bi-mortarboard-fill"></i> UNIMMAN Nutrition</span>
+                <span><i class="bi bi-shield-fill-check"></i> Standardized Language</span>
+            </div>
+        </div>
+
+        <div class="form-side">
+            <div class="login-box">
+                <h2>Log In</h2>
+                <div class="mb-2 text-muted small fw-bold">USERNAME</div>
+                <input type="text" id="user" class="form-control input-custom" placeholder="admin_gizi">
+                <div class="mb-2 text-muted small fw-bold">PASSWORD</div>
+                <input type="password" id="pass" class="form-control input-custom" placeholder="••••••••">
+                <button onclick="doLogin()" class="btn btn-login w-100 shadow mt-3">MASUK KE SISTEM</button>
+            </div>
         </div>
     </div>
 
-    <div id="appBody" style="display:none; max-width: 850px; margin: auto;">
-        
-        <div class="mb-3 d-flex justify-content-between align-items-center no-print">
-            <h5 class="fw-bold text-teal-dark mb-0">NCP of DA</h5>
-            <div>
-                <span class="small text-muted me-3"><i class="bi bi-person-circle"></i> <strong id="userNameDisplay"></strong></span>
-                <button onclick="location.reload()" class="btn btn-sm btn-outline-danger border-0">Logout</button>
+    <div id="appBody" class="container py-5" style="display:none; max-width: 1000px;">
+        <div class="d-flex justify-content-between align-items-center mb-5 no-print">
+            <h4 class="fw-800 text-teal-primary mb-0"><i class="bi bi-grid-fill me-2"></i>DASHBOARD</h4>
+            <div class="bg-white px-4 py-2 rounded-pill shadow-sm">
+                <span class="small text-muted"><i class="bi bi-person-circle"></i> <strong id="userNameDisplay"></strong></span>
+                <button onclick="location.reload()" class="btn btn-sm btn-link text-danger text-decoration-none fw-bold ms-3">Logout</button>
             </div>
         </div>
 
         <div id="stepPasien" class="wizard-step" style="display:block;">
-            <h4 class="section-title">Pencarian Rekam Medis</h4>
-            <div class="input-group mb-4">
-                <input type="text" id="inNIK" class="form-control input-custom rounded-start-pill" placeholder="Masukkan NIK Pasien...">
-                <button onclick="cariPasien()" class="btn btn-dark rounded-end-pill px-4">CARI</button>
+            <h4 class="section-title">Database Pasien</h4>
+            <div class="input-group mb-4 shadow-sm rounded-pill overflow-hidden">
+                <span class="input-group-text bg-white border-0 ps-4"><i class="bi bi-search"></i></span>
+                <input type="text" id="inNIK" class="form-control border-0 py-3" placeholder="Masukkan NIK Pasien untuk cek Riwayat">
+                <button onclick="cariPasien()" class="btn btn-teal-dark px-5 text-white fw-bold" style="background: var(--teal-primary)">CARI</button>
             </div>
 
             <div id="areaHistory" style="display:none;">
-                <h6 class="fw-bold mb-3">Riwayat Kunjungan Pasien:</h6>
-                <div id="listHistory"></div>
-                <button onclick="kunjunganBaru()" class="btn btn-warning w-100 rounded-pill mt-3 fw-bold">BUAT PEMERIKSAAN BARU</button>
+                <h6 class="fw-bold mb-3 text-teal-primary">Riwayat Kunjungan Ditemukan:</h6>
+                <div id="listHistory" class="row row-cols-1 row-cols-md-2 g-3"></div>
+                <button onclick="kunjunganBaru()" class="btn btn-warning w-100 rounded-pill mt-4 py-3 fw-bold shadow">KUNJUNGAN BARU</button>
             </div>
 
             <div id="formPasienBaru" style="display:none;">
-                <div class="alert alert-info py-2 small">Pasien baru terdeteksi. Silakan lengkapi identitas:</div>
-                <div class="row g-2">
-                    <div class="col-12"><input type="text" id="namaP" class="form-control input-custom" placeholder="Nama Lengkap"></div>
+                <div class="alert alert-warning border-0 rounded-4">NIK baru terdeteksi. Silakan daftarkan pasien:</div>
+                <div class="row g-3">
+                    <div class="col-12"><input type="text" id="namaP" class="form-control input-custom" placeholder="Nama Lengkap Pasien"></div>
                     <div class="col-6"><input type="date" id="tglP" class="form-control input-custom"></div>
                     <div class="col-6"><select id="jkP" class="form-select input-custom"><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></div>
-                    <button onclick="kunjunganBaru()" class="btn btn-dark w-100 mt-3 rounded-pill">LANJUT KE PEMERIKSAAN</button>
+                    <button onclick="kunjunganBaru()" class="btn btn-dark w-100 mt-3 rounded-pill py-3 fw-bold">PROSES</button>
                 </div>
             </div>
         </div>
 
         <div id="stepAssess" class="wizard-step">
-            <h4 class="section-title">Asesmen Gizi & Biokimia</h4>
-            <div id="infoPasienAktif" class="small mb-4 text-muted border-bottom pb-2"></div>
+            <h4 class="section-title">Input Asesmen & Biokimia</h4>
+            <div id="infoPasienAktif" class="p-3 bg-light rounded-4 mb-4 small"></div>
             
             <div class="row g-3 mb-4">
-                <div class="col-12"><label class="small fw-bold">Diagnosa Medis</label><textarea id="diagP" class="form-control input-custom" placeholder="Contoh: DM Tipe 2, Anemia, dsb." rows="2"></textarea></div>
+                <div class="col-12"><label class="small fw-bold">Diagnosa Medis</label><textarea id="diagP" class="form-control input-custom" rows="2"></textarea></div>
                 <div class="col-4"><label class="small fw-bold">BB (kg)</label><input type="number" id="inBB" class="form-control input-custom"></div>
                 <div class="col-4"><label class="small fw-bold">TB (cm)</label><input type="number" id="inTB" class="form-control input-custom"></div>
                 <div class="col-4"><label class="small fw-bold">LiLA (cm)</label><input type="number" id="inLILA" class="form-control input-custom"></div>
             </div>
 
-            <h6 class="fw-bold text-muted border-bottom pb-2 mb-3">Data Laboratorium</h6>
-            <div class="row row-cols-2 row-cols-md-4 g-2 mb-4">
-                <div class="col"><label class="x-small fw-bold">GDS (mg/dL)</label><input type="number" id="inGula" class="form-control input-custom"></div>
-                <div class="col"><label class="x-small fw-bold">Asam Urat</label><input type="number" id="inUrat" class="form-control input-custom"></div>
-                <div class="col"><label class="x-small fw-bold">Hb (g/dL)</label><input type="number" id="inHB" class="form-control input-custom"></div>
-                <div class="col"><label class="x-small fw-bold">Kolesterol</label><input type="number" id="inKol" class="form-control input-custom"></div>
+            <h6 class="fw-bold text-muted mb-3"><i class="bi bi-droplet-fill text-danger"></i> Hasil Lab</h6>
+            <div class="row g-2 mb-4">
+                <div class="col-md-3"><label class="x-small fw-bold">GDS (mg/dL)</label><input type="number" id="inGula" class="form-control input-custom"></div>
+                <div class="col-md-3"><label class="x-small fw-bold">Asam Urat</label><input type="number" id="inUrat" class="form-control input-custom"></div>
+                <div class="col-md-3"><label class="x-small fw-bold">Hb (g/dL)</label><input type="number" id="inHB" class="form-control input-custom"></div>
+                <div class="col-md-3"><label class="x-small fw-bold">Kolesterol</label><input type="number" id="inKol" class="form-control input-custom"></div>
             </div>
 
-            <div class="col-12 mb-4"><label class="small fw-bold">Asupan Makan: <span id="valAsup">100</span>%</label>
-                <input type="range" id="inAsup" class="form-range" min="0" max="150" value="100" oninput="document.getElementById('valAsup').innerText=this.value">
-            </div>
-
-            <button onclick="prosesPakar()" class="btn btn-success w-100 py-3 rounded-pill fw-bold">SIMPAN & ANALISIS PES</button>
+            <button onclick="prosesPakar()" class="btn btn-success w-100 py-3 rounded-pill fw-bold shadow">SIMPAN & ANALISIS PES</button>
         </div>
 
         <div id="stepHasil" class="wizard-step">
             <div id="cetakArea">
-                <center class="mb-4">
-                    <h5 class="fw-bold mb-0">NUTRITION CARE PROCESS REPORT</h5>
-                    <small id="labelVisit" class="text-uppercase fw-bold text-muted"></small>
-                </center>
-                <div id="hasilPasien" class="p-3 bg-light border rounded small mb-3"></div>
-                <div class="p-2 border-start border-4 border-primary bg-light mb-3"><h6 class="fw-bold mb-0 small text-primary">DIAGNOSA MEDIS:</h6><p id="hasilDiagMedis" class="mb-0 small fw-bold"></p></div>
-                
-                <h6 class="fw-bold border-bottom pb-2">DIAGNOSA GIZI (PES)</h6>
-                <div id="hasilPES" class="mb-3"></div>
+                <div class="d-flex justify-content-between mb-5">
+                    <div>
+                        <h2 class="fw-800 text-teal-primary mb-0">NUTRITION CARE PROCESS</h2>
+                        <p class="text-muted fw-bold" id="labelVisit"></p>
+                    </div>
+                    <div class="text-end small"><strong>NCP of DA Professional</strong><br>Report Vers. 2.0</div>
+                </div>
 
-                <h6 class="fw-bold border-bottom pb-2">INTERVENSI GIZI</h6>
-                <div id="hasilIntervensi" class="mb-4"></div>
+                <div id="hasilPasien" class="p-4 bg-light rounded-4 mb-4"></div>
                 
-                <div class="row mt-5 small">
-                    <div class="col-6">Dicetak: <strong id="waktuCetak"></strong></div>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <h6 class="fw-bold border-bottom pb-2">DIAGNOSA GIZI (PES)</h6>
+                        <div id="hasilPES"></div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <h6 class="fw-bold border-bottom pb-2">INTERVENSI GIZI</h6>
+                        <div id="hasilIntervensi"></div>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-6 small">Dicetak: <br><strong id="waktuCetak"></strong></div>
                     <div class="col-6 text-end">Ahli Gizi,<br><br><br><strong>( Dian Agnesia, S.Gz., M.PH )</strong></div>
                 </div>
             </div>
-            <button onclick="cetakLaporan()" class="btn btn-primary w-100 mt-4 py-3 no-print rounded-pill shadow">SIMPAN / CETAK PDF</button>
-            <button onclick="location.reload()" class="btn btn-link w-100 mt-2 text-muted no-print text-decoration-none small">Kembali ke Beranda</button>
+            <button onclick="cetakLaporan()" class="btn btn-primary w-100 py-3 no-print rounded-pill shadow mb-2">SIMPAN / CETAK</button>
+            <button onclick="location.reload()" class="btn btn-link w-100 text-muted no-print text-decoration-none">Kembali</button>
         </div>
     </div>
 </div>
 
 <script>
-    // MASUKKAN URL GOOGLE SCRIPT ANDA DI SINI
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqyBMMf-VI4UifjDzXH1OEdPu9qrXmqv1WtTtI8CmNqxeQkg1KfF5PzgXTjutkytQ/exec"; 
+    // MASUKKAN URL GOOGLE APPS SCRIPT ASLI ANDA
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqyBMMf-VI4UifjDzXH1OEdPu9qrXmqv1WtTtI8CmNqxeQkg1KfF5PzgXTjutkytQ/exec";
 
-    // Database Standar NCP 2008
     const master_ncp = {
-        "NC-2.2_HB": { p: "Perubahan nilai lab terkait gizi (Anemia)", e: "Asupan mikronutrien tidak adekuat", s: "Hb rendah", int: "Diet tinggi Fe, edukasi konsumsi vitamin C untuk penyerapan." },
-        "NC-2.2_GULA": { p: "Perubahan nilai lab terkait gizi (Hiperglikemia)", e: "Asupan karbohidrat berlebih / pola makan tidak tepat", s: "GDS > 200 mg/dL", int: "Diet DM, edukasi pembatasan gula sederhana." },
-        "NC-2.2_URAT": { p: "Perubahan nilai lab terkait gizi (Hiperurisemia)", e: "Asupan tinggi purin", s: "Asam urat > standar", int: "Diet rendah purin, edukasi hidrasi." },
-        "NC-2.2_KOL": { p: "Perubahan nilai lab terkait gizi (Hiperlipidemia)", e: "Asupan lemak jenuh tinggi", s: "Kolesterol > 200", int: "Diet rendah lemak jenuh, edukasi serat tinggi." },
-        "NC-3.1": { p: "Berat badan kurang / Risiko KEK", e: "Asupan energi kronis tidak adekuat", s: "IMT rendah / LiLA < 23,5 cm", int: "Diet TETP (Tinggi Energi Tinggi Protein)." },
-        "NI-5.1": { p: "Asupan mikronutrien tidak adekuat", e: "Kurang pengetahuan gizi", s: "Asupan < 80%", int: "Edukasi pemilihan bahan makanan beragam." }
+        "NC-2.2_HB": { p: "Perubahan nilai lab terkait gizi (Anemia)", e: "Asupan mikronutrien tidak adekuat", s: "Hb rendah", int: "Diet tinggi Fe, konsumsi protein hewani." },
+        "NC-2.2_GULA": { p: "Perubahan nilai lab terkait gizi (Hiperglikemia)", e: "Pola makan tidak tepat", s: "GDS > 200 mg/dL", int: "Diet DM, pemantauan karbohidrat." },
+        "NC-2.2_URAT": { p: "Perubahan nilai lab terkait gizi (Hiperurisemia)", e: "Asupan tinggi purin", s: "Asam urat tinggi", int: "Diet rendah purin." },
+        "NC-3.1": { p: "Berat badan kurang / Risiko KEK", e: "Asupan energi tidak adekuat", s: "IMT rendah / LiLA < 23,5 cm", int: "Diet TETP." }
     };
 
-    let historyPasien = []; 
-    let dataAktif = { nik: "", nama: "", tgl: "", jk: "" };
+    let dataAktif = { nik: "", nama: "" };
+    let historyPasien = [];
 
     function doLogin() {
-        if(document.getElementById('user').value && document.getElementById('pass').value) {
-            document.getElementById('userNameDisplay').innerText = document.getElementById('user').value;
+        const u = document.getElementById('user').value;
+        const p = document.getElementById('pass').value;
+        if(u && p) {
+            document.getElementById('userNameDisplay').innerText = u;
             document.getElementById('stepLogin').style.display = 'none';
             document.getElementById('appBody').style.display = 'block';
         }
     }
 
+    // FUNGSI KONEKSI DATABASE ASLI
     async function cariPasien() {
         const nik = document.getElementById('inNIK').value;
         if(!nik) return;
-        // Simulasi Pencarian NIK 123
-        if(nik === "123") {
-            dataAktif = { nik: "123", nama: "Miranda S. Samodara", tgl: "20/05/2007", jk: "Perempuan" };
-            historyPasien = [
-                { tgl: "03/10/2025", visit: 1, imt: 17.5, hb: 10.5, gula: 110, urat: 4.2, pes: ["NC-2.2_HB", "NC-3.1"] }
-            ];
-            renderHistory();
-        } else {
-            document.getElementById('areaHistory').style.display = 'none';
-            document.getElementById('formPasienBaru').style.display = 'block';
+
+        try {
+            const resp = await fetch(`${SCRIPT_URL}?action=read&nik=${nik}`);
+            const res = await resp.json();
+
+            if(res.status === "success") {
+                dataAktif = { nik: res.data.nik, nama: res.data.nama };
+                historyPasien = res.data.history || [];
+                renderHistory();
+            } else {
+                dataAktif = { nik: nik, nama: "" };
+                document.getElementById('areaHistory').style.display = 'none';
+                document.getElementById('formPasienBaru').style.display = 'block';
+            }
+        } catch(e) {
+            alert("Koneksi gagal. Pastikan URL SCRIPT sudah benar.");
         }
     }
 
     function renderHistory() {
         let h = "";
         historyPasien.forEach((v, i) => {
-            h += `<div class="history-card shadow-sm" onclick="reprintVisit(${i})">
-                    <div class="d-flex justify-content-between"><strong>Kunjungan #${v.visit}</strong><span>${v.tgl}</span></div>
-                    <div class="x-small text-muted">Hb: ${v.hb} | Gula: ${v.gula} | IMT: ${v.imt}</div>
-                  </div>`;
+            h += `<div class="col"><div class="p-3 border rounded-4 bg-white shadow-sm" onclick="reprintVisit(${i})" style="cursor:pointer">
+                    <div class="d-flex justify-content-between mb-2"><span class="badge bg-teal-light">KUNJUNGAN #${v.visit}</span><small>${v.tgl}</small></div>
+                    <div class="fw-bold small">Hb: ${v.hb} | IMT: ${v.imt}</div>
+                  </div></div>`;
         });
         document.getElementById('listHistory').innerHTML = h;
         document.getElementById('areaHistory').style.display = 'block';
@@ -176,59 +250,43 @@
     }
 
     function kunjunganBaru() {
-        if(!dataAktif.nama) {
-            dataAktif.nama = document.getElementById('namaP').value;
-            dataAktif.nik = document.getElementById('inNIK').value;
-        }
+        if(!dataAktif.nama) dataAktif.nama = document.getElementById('namaP').value;
         document.getElementById('infoPasienAktif').innerHTML = `Pasien: <b>${dataAktif.nama}</b> | NIK: ${dataAktif.nik}`;
         show('stepAssess');
     }
 
+    function prosesPakar() {
+        const bb = parseFloat(document.getElementById('inBB').value), tb = parseFloat(document.getElementById('inTB').value)/100;
+        const imt = bb / (tb * tb), hb = parseFloat(document.getElementById('inHB').value);
+        const gula = parseFloat(document.getElementById('inGula').value), lila = parseFloat(document.getElementById('inLILA').value);
+
+        let pesArr = [];
+        if(hb < 12) pesArr.push("NC-2.2_HB");
+        if(gula > 200) pesArr.push("NC-2.2_GULA");
+        if(imt < 18.5 || lila < 23.5) pesArr.push("NC-3.1");
+
+        renderReport(imt, hb, lila, pesArr);
+    }
+
+    function renderReport(imt, hb, lila, pesArr) {
+        document.getElementById('waktuCetak').innerText = new Date().toLocaleString('id-ID');
+        document.getElementById('labelVisit').innerText = "Catatan Rekam Gizi #" + (historyPasien.length + 1);
+        document.getElementById('hasilPasien').innerHTML = `<b>Pasien:</b> ${dataAktif.nama} (${dataAktif.nik})<br>IMT: ${imt.toFixed(1)} | Hb: ${hb || '-'} | LiLA: ${lila || '-'}`;
+
+        let pesHtml = "", intvHtml = "";
+        pesArr.forEach(c => {
+            const d = master_ncp[c];
+            pesHtml += `<div class="p-3 border-start border-4 border-success bg-white mb-2 shadow-sm small"><b>${d.p}</b><br>E: ${d.e}</div>`;
+            intvHtml += `<div class="small mb-1">• ${d.int}</div>`;
+        });
+        document.getElementById('hasilPES').innerHTML = pesHtml || "Normal";
+        document.getElementById('hasilIntervensi').innerHTML = intvHtml || "Edukasi Gizi Seimbang.";
+        show('stepHasil');
+    }
+
     function reprintVisit(i) {
         const v = historyPasien[i];
-        document.getElementById('labelVisit').innerText = `Rekap Kunjungan #${v.visit}`;
-        renderReport(v.imt, v.hb, 0, v.pes, v.gula, v.urat);
-    }
-
-    function prosesPakar() {
-        const bb = parseFloat(document.getElementById('inBB').value);
-        const tb = parseFloat(document.getElementById('inTB').value)/100;
-        const imt = bb / (tb * tb);
-        const hb = parseFloat(document.getElementById('inHB').value);
-        const gula = parseFloat(document.getElementById('inGula').value);
-        const urat = parseFloat(document.getElementById('inUrat').value);
-        const kol = parseFloat(document.getElementById('inKol').value);
-        const lila = parseFloat(document.getElementById('inLILA').value);
-        const asup = parseInt(document.getElementById('inAsup').value);
-
-        let diag = [];
-        if(hb < 12) diag.push("NC-2.2_HB");
-        if(gula > 200) diag.push("NC-2.2_GULA");
-        if(urat > 6) diag.push("NC-2.2_URAT");
-        if(kol > 200) diag.push("NC-2.2_KOL");
-        if(imt < 18.5 || lila < 23.5) diag.push("NC-3.1");
-        if(asup < 80) diag.push("NI-5.1");
-
-        document.getElementById('labelVisit').innerText = `Kunjungan #${historyPasien.length + 1}`;
-        renderReport(imt, hb, lila, diag, gula, urat);
-    }
-
-    function renderReport(imt, hb, lila, codes, gula, urat) {
-        document.getElementById('waktuCetak').innerText = new Date().toLocaleString('id-ID');
-        document.getElementById('hasilDiagMedis').innerText = document.getElementById('diagP').value || "-";
-        document.getElementById('hasilPasien').innerHTML = `<b>${dataAktif.nama}</b> (${dataAktif.nik})<br>IMT: ${imt.toFixed(1)} | Hb: ${hb || '-'} | GDS: ${gula || '-'}`;
-
-        let pes = "", intv = "";
-        codes.forEach(c => {
-            const d = master_ncp[c];
-            if(d) {
-                pes += `<div class="p-2 border-start border-4 border-success bg-white mb-2 small shadow-sm"><b>${d.p}</b><br>E: ${d.e}</div>`;
-                intv += `<div class="small mb-1">• ${d.int}</div>`;
-            }
-        });
-        document.getElementById('hasilPES').innerHTML = pes || "Status Normal.";
-        document.getElementById('hasilIntervensi').innerHTML = intv || "Edukasi Gizi Seimbang.";
-        show('stepHasil');
+        renderReport(v.imt, v.hb, 0, v.pes);
     }
 
     function cetakLaporan() {
