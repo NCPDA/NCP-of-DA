@@ -10,7 +10,7 @@
         :root { --teal-dark: #00695c; --teal-light: #00897b; --orange: #ff9800; --bg-soft: #f8fbfb; }
         body { background: var(--bg-soft); font-family: 'Inter', sans-serif; color: #444; overflow-x: hidden; }
         
-        /* LOGIN REDESIGN - RESPONSIVE */
+        /* LOGIN PAGE */
         .login-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 15px; }
         .login-card { max-width: 1000px; width: 100%; background: white; border-radius: 30px; overflow: hidden; display: flex; flex-wrap: wrap; box-shadow: 0 20px 60px rgba(0,0,0,0.06); }
         .login-left { background: #ffffff; padding: clamp(30px, 5vw, 60px); flex: 1.4; min-width: 320px; border-right: 1px solid #f0f0f0; display: flex; flex-direction: column; justify-content: center; }
@@ -18,40 +18,31 @@
         
         .brand-title { font-size: clamp(2.2rem, 5vw, 3rem); font-weight: 800; color: var(--teal-dark); line-height: 1.1; margin-bottom: 15px; }
         .brand-title span { color: var(--orange); }
-        .app-logo-right { width: 110px; margin-bottom: 25px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
+        .desc-text { font-size: 0.9rem; line-height: 1.6; color: #555; text-align: justify; margin-bottom: 20px; }
         
-        .desc-text { font-size: 0.95rem; line-height: 1.6; color: #555; text-align: justify; margin-bottom: 20px; }
-        .input-custom { background: #f1f5f4 !important; border: none !important; border-radius: 15px !important; padding: 12px 20px !important; width: 100%; font-size: 0.95rem; }
-        .btn-login { background: var(--orange); color: white; border: none; border-radius: 15px; padding: 15px; font-weight: 700; width: 100%; margin-top: 15px; transition: 0.3s; box-shadow: 0 8px 15px rgba(255,152,0,0.2); }
-
-        /* WIZARD & CONTENT */
+        /* COMPONENTS */
+        .input-custom { background: #f1f5f4 !important; border: none !important; border-radius: 12px !important; padding: 10px 15px !important; font-size: 0.9rem; }
+        .btn-main { background: var(--orange); color: white; border: none; border-radius: 12px; padding: 12px; font-weight: 700; transition: 0.3s; box-shadow: 0 5px 15px rgba(255,152,0,0.2); }
         .wizard-step { display: none; background: white; border-radius: 25px; padding: clamp(20px, 5vw, 40px); box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 20px; animation: fadeIn 0.4s ease; }
-        .section-title { font-weight: 800; color: var(--teal-dark); margin-bottom: 20px; border-left: 5px solid var(--orange); padding-left: 12px; font-size: 1.25rem; }
-        
-        /* NOTIF & LOADER */
-        #customAlert { display: none; position: fixed; top: 20px; right: 20px; left: 20px; z-index: 11000; padding: 15px; border-radius: 15px; background: white; box-shadow: 0 10px 40px rgba(0,0,0,0.2); border-left: 6px solid var(--orange); max-width: 400px; margin: auto; animation: slideIn 0.4s ease; }
-        #loader { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; }
+        .section-title { font-weight: 800; color: var(--teal-dark); margin-bottom: 20px; border-left: 5px solid var(--orange); padding-left: 12px; }
 
-        @keyframes slideIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        #loader { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 10000; flex-direction: column; justify-content: center; align-items: center; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        @media (max-width: 768px) { .login-left { text-align: center; align-items: center; border-right: none; border-bottom: 1px solid #f0f0f0; } .desc-text { text-align: center; } }
-        @media print { .no-print { display: none !important; } .wizard-step { box-shadow: none; padding: 0; } body { background: white; } }
+        @media print { .no-print { display: none !important; } .wizard-step { box-shadow: none; padding: 0; } }
     </style>
 </head>
 <body>
 
-<div id="customAlert"><div class="d-flex align-items-center"><i class="bi bi-info-circle-fill text-warning fs-4 me-3"></i><p id="alertMsg" class="small mb-0 fw-bold"></p></div></div>
-
 <div id="loader">
     <div class="spinner-border text-success mb-2"></div>
-    <span class="small fw-bold text-teal-dark">Sinkronisasi Data...</span>
+    <span class="small fw-bold text-teal-dark">Memproses Analisis Pakar...</span>
 </div>
 
 <div class="container py-3">
     <div id="navArea" class="mb-3 text-end no-print" style="display:none; max-width: 800px; margin: auto;">
-        <span class="small text-muted me-2"><i class="bi bi-person-circle"></i> <strong id="userNameDisplay"></strong></span>
-        <button onclick="doLogout()" class="btn btn-sm btn-outline-danger border-0 rounded-pill">Logout</button>
+        <span class="small text-muted me-2"><i class="bi bi-person-check"></i> <strong id="userNameDisplay"></strong></span>
+        <button onclick="doLogout()" class="btn btn-sm btn-link text-danger text-decoration-none">Keluar</button>
     </div>
 
     <div id="stepLogin" class="login-wrapper">
@@ -59,231 +50,193 @@
             <div class="login-left">
                 <h1 class="brand-title">NCP <span>of DA</span></h1>
                 <div class="desc-text">
-                    <p>Merupakan platform digital yang dirancang untuk mempermudah implementasi <b>Nutrition Care Process</b> dalam praktik klinik dan pembelajaran gizi secara terstruktur dan efisien. Aplikasi ini membantu pengguna dalam melakukan asesmen gizi, penegakan diagnosis, perencanaan intervensi, serta monitoring dan evaluasi secara sistematis dan terdokumentasi dengan baik.</p>
-                    <p class="mb-0">Dengan pendekatan yang terstandar dan berbasis praktik profesional, <b>NCP of DA</b> mendukung dietisien dan mahasiswa gizi dalam meningkatkan kualitas asuhan gizi yang akurat, terukur, dan berkelanjutan.</p>
+                    Platform digital yang dirancang untuk mempermudah implementasi <b>Nutrition Care Process (NCP)</b> sesuai standar IDNT/NCP internasional. Mendukung dietisien dan mahasiswa gizi dalam melakukan asesmen, diagnosa PES otomatis, intervensi, serta monitoring-evaluasi secara terstruktur dan profesional.
                 </div>
-                <hr class="w-25">
                 <div class="d-flex align-items-center mt-3">
-                    <img src="FotoProfil.jpg" style="width:50px; height:50px; border-radius:50%; margin-right:15px; object-fit: cover;" onerror="this.src='https://via.placeholder.com/50'">
-                    <div class="text-start"><p class="mb-0 fw-bold">Dian Agnesia</p><p class="small text-muted mb-0">Dosen & Ahli Gizi</p></div>
+                    <img src="FotoProfil.jpg" style="width:45px; height:45px; border-radius:50%; margin-right:12px; object-fit: cover;" onerror="this.src='https://via.placeholder.com/45'">
+                    <div class="text-start"><p class="mb-0 fw-bold small">Dian Agnesia, S.Gz., M.PH</p></div>
                 </div>
             </div>
             <div class="login-right">
-                <img src="logo_NCPDA.png" class="app-logo-right" alt="Logo" onerror="this.style.display='none'">
-                <h5 class="fw-bold mb-3 text-teal-dark">Akses Sistem</h5>
-                <input type="text" id="user" class="form-control input-custom mb-3" placeholder="Username">
-                <input type="password" id="pass" class="form-control input-custom mb-4" placeholder="Password">
-                <button onclick="doLogin()" class="btn-login">MASUK KE SISTEM</button>
+                <img src="logo_NCPDA.png" style="width:90px; margin-bottom:20px;" onerror="this.style.display='none'">
+                <input type="text" id="user" class="form-control input-custom mb-2" placeholder="Username">
+                <input type="password" id="pass" class="form-control input-custom mb-3" placeholder="Password">
+                <button onclick="doLogin()" class="btn-main w-100">MASUK KE SISTEM</button>
             </div>
         </div>
     </div>
 
     <div id="appBody" style="display:none; max-width: 800px; margin: auto;">
         <div id="stepPasien" class="wizard-step">
-            <h4 class="section-title">Data Pasien</h4>
+            <h4 class="section-title">Asesmen: Identitas & Medis</h4>
             <div class="input-group mb-4">
-                <input type="text" id="inNIK" class="form-control bg-light border-0 rounded-start-4" placeholder="Input NIK 16 Digit">
-                <button onclick="cekNIK()" class="btn btn-dark rounded-end-4 px-3">CARI</button>
+                <input type="text" id="inNIK" class="form-control bg-light border-0" placeholder="NIK Pasien">
+                <button onclick="cekNIK()" class="btn btn-dark">Cek Data</button>
             </div>
             <div class="row g-2">
                 <div class="col-12"><input type="text" id="namaP" class="form-control input-custom" placeholder="Nama Lengkap"></div>
-                <div class="col-6"><label class="small text-muted">Tanggal Lahir</label><input type="date" id="tglP" class="form-control input-custom"></div>
-                <div class="col-6"><label class="small text-muted">Gender</label>
-                    <select id="jkP" class="form-select input-custom"><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select>
-                </div>
-                <div class="col-12"><textarea id="diagP" class="form-control input-custom" placeholder="Diagnosa Medis Dokter" rows="2"></textarea></div>
+                <div class="col-6"><input type="date" id="tglP" class="form-control input-custom"></div>
+                <div class="col-6"><select id="jkP" class="form-select input-custom"><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></div>
+                <div class="col-12"><textarea id="diagP" class="form-control input-custom" placeholder="Diagnosa Medis (Dokter)" rows="2"></textarea></div>
             </div>
-            <button onclick="show('stepAssess')" class="btn btn-dark w-100 mt-5 rounded-pill py-3 fw-bold">LANJUT ASESMEN</button>
+            <button onclick="show('stepAssess')" class="btn btn-dark w-100 mt-4 py-3 fw-bold rounded-pill">LANJUT KE PARAMETER GIZI</button>
         </div>
 
         <div id="stepAssess" class="wizard-step">
-            <h4 class="section-title">Nutrition Assessment</h4>
-            <div class="row g-2">
+            <h4 class="section-title">Parameter Antropometri & Klinis</h4>
+            <div class="row g-3">
                 <div class="col-6"><label class="small fw-bold">BB (kg)</label><input type="number" id="inBB" class="form-control input-custom"></div>
                 <div class="col-6"><label class="small fw-bold">TB (cm)</label><input type="number" id="inTB" class="form-control input-custom"></div>
-                <div class="col-12 mt-2"><label class="small fw-bold">Asupan: <span id="valAsup">100</span>%</label>
+                <div class="col-12"><label class="small fw-bold">Lingkar Lengan Atas / LiLA (cm)</label><input type="number" id="inLILA" class="form-control input-custom"></div>
+                <div class="col-12"><label class="small fw-bold">Asupan Makan (%): <span id="valAsup">100</span>%</label>
                     <input type="range" id="inAsup" class="form-range" min="0" max="150" value="100" oninput="document.getElementById('valAsup').innerText=this.value">
                 </div>
-                <div class="col-12 mt-4"><label class="small fw-bold text-muted mb-2">Data Biokimia</label><div class="row row-cols-2 g-2" id="labContainer"></div></div>
-                <div class="col-12 mt-4"><label class="small fw-bold text-muted mb-2">Fisik & Klinis</label><div id="listFisik" class="row row-cols-2 g-2"></div></div>
+                <div class="col-12"><label class="small fw-bold text-primary">Kadar Hemoglobin (g/dL)</label><input type="number" id="inHB" class="form-control input-custom" placeholder="Contoh: 11.5"></div>
             </div>
-            <button onclick="prosesPES()" class="btn btn-success w-100 mt-5 rounded-pill py-3 fw-bold shadow">SIMPAN & ANALISIS PES</button>
+            <button onclick="prosesPakar()" class="btn btn-success w-100 mt-5 py-3 fw-bold rounded-pill">SIMPAN & ANALISIS PES</button>
         </div>
 
         <div id="stepHasil" class="wizard-step">
             <div id="cetakArea">
-                <center>
-                    <img src="logo_NCPDA.png" style="width:65px;" onerror="this.style.display='none'">
-                    <h5 class="fw-bold mt-2 mb-0">NUTRITION CARE REPORT</h5>
-                    <p class="small text-muted mb-4">Professional Nutritionist Record</p>
-                </center>
-                <div id="hasilPasien" class="p-3 bg-light rounded-4 small border mb-3"></div>
-                <div class="mb-3 p-3 border-start border-4 border-primary bg-light rounded-end shadow-sm">
-                    <h6 class="fw-bold mb-1 small text-primary text-uppercase">Diagnosa Medis (Dokter):</h6>
+                <div class="text-center mb-4">
+                    <h5 class="fw-bold mb-0">NUTRITION CARE PROCESS REPORT</h5>
+                    <small class="text-muted">Berdasarkan Standar NCP/IDNT Internasional</small>
+                </div>
+                <div id="hasilPasien" class="p-3 bg-light border rounded small mb-3"></div>
+                
+                <div class="p-2 border-start border-4 border-primary bg-light mb-4">
+                    <h6 class="fw-bold mb-1 small text-primary">DIAGNOSA MEDIS:</h6>
                     <p id="hasilDiagMedis" class="mb-0 small fw-bold text-dark"></p>
                 </div>
-                <h6 class="fw-bold border-bottom pb-2 mt-4">DIAGNOSA GIZI (PES):</h6>
-                <div id="hasilPES"></div>
+
+                <h6 class="fw-bold border-bottom pb-2">DIAGNOSA GIZI (PES)</h6>
+                <div id="hasilPES" class="mb-4"></div>
+
+                <h6 class="fw-bold border-bottom pb-2">RENCANA INTERVENSI GIZI</h6>
+                <div id="hasilIntervensi"></div>
+                
                 <div class="row mt-5 small">
-                    <div class="col-7 text-muted italic">Dicetak pada: <br><strong id="waktuCetak"></strong></div>
-                    <div class="col-5 text-end">Ahli Gizi,<br><br><br><strong id="namaAhliGizi"></strong></div>
+                    <div class="col-7 text-muted">Tanggal: <strong id="waktuCetak"></strong></div>
+                    <div class="col-5 text-end">Dietisien,<br><br><br><strong id="namaAhliGizi"></strong></div>
                 </div>
             </div>
-            <button onclick="saveAndPrint()" class="btn btn-primary w-100 mt-4 rounded-pill py-3 no-print">CETAK (NCPofDA_Nama)</button>
-            <button onclick="location.reload()" class="btn btn-link w-100 mt-1 text-muted no-print text-decoration-none small">Input Pasien Baru</button>
+            <button onclick="window.print()" class="btn btn-primary w-100 mt-4 py-3 no-print rounded-pill">CETAK LAPORAN (PDF)</button>
+            <button onclick="location.reload()" class="btn btn-link w-100 mt-2 text-muted no-print text-decoration-none">Pasien Baru</button>
         </div>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyiAcMYSyf6kl30_5Cki9zBRnLZnD1wuBlyKVI0z4i7QV31B6wPDUd-XdGtDlDS9j8/exec"; 
-    let DB = null, currentNutritionist = "", currentVisit = 1;
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqyBMMf-VI4UifjDzXH1OEdPu9qrXmqv1WtTtI8CmNqxeQkg1KfF5PzgXTjutkytQ/exec"; // Masukkan URL Deploy Anda
+    let DB_LOCAL = null, currentNutritionist = "", currentVisit = 1;
+
+    // DATABASE PAKAR (IDNT 2008)
+    const master_ncp = [
+        { 
+            kode: "NC-2.2", 
+            p: "Perubahan nilai lab terkait zat gizi (Anemia)", 
+            e: "Asupan mikronutrien (Zat Besi/Folat) tidak adekuat", 
+            s: "Kadar Hemoglobin rendah",
+            intervensi: "Edukasi gizi mengenai sumber zat besi (Heme) dan koordinasi pemberian suplementasi Fe."
+        },
+        { 
+            kode: "NC-3.1", 
+            p: "Berat badan kurang / Risiko KEK", 
+            e: "Asupan energi tidak adekuat dalam waktu lama", 
+            s: "LILA < 23,5 cm atau IMT < 18,5",
+            intervensi: "Pemberian PMT (Makanan Tambahan) tinggi energi protein dan konseling jadwal makan."
+        },
+        { 
+            kode: "NI-5.1", 
+            p: "Asupan zat gizi mikro tidak adekuat", 
+            e: "Kurang pengetahuan terkait pemilihan bahan makanan bergizi", 
+            s: "Estimasi asupan < 80%",
+            intervensi: "Edukasi pemilihan bahan makanan beragam dan teknik pengolahan untuk mempertahankan zat gizi."
+        },
+        { 
+            kode: "NI-1.5", 
+            p: "Kelebihan asupan energi", 
+            e: "Kebiasaan konsumsi makanan padat energi/manis", 
+            s: "Asupan > 110%",
+            intervensi: "Preskripsi diet rendah kalori seimbang dan edukasi porsi makan (Isi Piringku)."
+        }
+    ];
 
     window.onload = () => {
-        const savedUser = localStorage.getItem('ncp_user');
-        if (savedUser && SCRIPT_URL !== "GANTI_DENGAN_URL_DEPLOY_ANDA") {
-            currentNutritionist = savedUser;
-            loadDatabase();
-        }
+        const saved = localStorage.getItem('ncp_user');
+        if (saved) { currentNutritionist = saved; initApp(); }
     };
 
-    async function loadDatabase() {
-        toggleLoad(true);
-        try {
-            const response = await fetch(SCRIPT_URL);
-            DB = await response.json();
-            renderInputs();
-            document.getElementById('userNameDisplay').innerText = currentNutritionist;
-            document.getElementById('stepLogin').style.display = "none";
-            document.getElementById('navArea').style.display = "block";
-            document.getElementById('appBody').style.display = "block";
-            show('stepPasien');
-        } catch(e) { notify("Gagal Sinkron. Cek URL Deployment!"); localStorage.removeItem('ncp_user'); }
-        toggleLoad(false);
+    function initApp() {
+        document.getElementById('userNameDisplay').innerText = currentNutritionist;
+        document.getElementById('stepLogin').style.display = "none";
+        document.getElementById('navArea').style.display = "block";
+        document.getElementById('appBody').style.display = "block";
+        show('stepPasien');
     }
 
     async function doLogin() {
         const u = document.getElementById('user').value, p = document.getElementById('pass').value;
-        if(!u || !p) return notify("Lengkapi Akun!");
-        toggleLoad(true);
-        try {
-            const res = await fetch(`${SCRIPT_URL}?action=login&user=${u}&pass=${p}`).then(r => r.json());
-            if(res.status === "success") {
-                currentNutritionist = res.name;
-                localStorage.setItem('ncp_user', res.name);
-                loadDatabase();
-            } else { notify("Akses Ditolak!"); toggleLoad(false); }
-        } catch(e) { notify("Error Server."); toggleLoad(false); }
+        if(u && p) {
+            currentNutritionist = u; // Simulasi login sederhana
+            localStorage.setItem('ncp_user', u);
+            initApp();
+        }
     }
 
     function doLogout() { localStorage.removeItem('ncp_user'); location.reload(); }
 
-    async function cekNIK() {
-        const nik = document.getElementById('inNIK').value;
-        if(!nik) return;
-        toggleLoad(true);
-        try {
-            const res = await fetch(`${SCRIPT_URL}?action=cekNIK&nik=${nik}`).then(r => r.json());
-            if(res.status === "found") {
-                document.getElementById('namaP').value = res.nama;
-                document.getElementById('tglP').value = res.tglLahir;
-                document.getElementById('jkP').value = res.jk;
-                currentVisit = res.kunjunganKe;
-                notify(`Data Ditemukan (Kunjungan #${res.kunjunganKe})`);
-            } else { currentVisit = 1; notify("Pasien Baru Terdeteksi"); }
-        } catch(e) { notify("Error Koneksi."); }
-        toggleLoad(false);
-    }
-
-    function renderInputs() {
-        let lb = ""; 
-        const paramsUnik = [...new Set(DB.logika_biokimia.map(i => i.parameter))];
-        paramsUnik.forEach(p => {
-            lb += `<div class="col"><div class="p-2 border rounded bg-white small shadow-sm">
-                   <label class="fw-bold d-block text-muted" style="font-size:9px">${p}</label>
-                   <input type="number" class="form-control form-control-sm border-0 p-0 in-lab" data-param="${p}">
-                   </div></div>`;
-        });
-        document.getElementById('labContainer').innerHTML = lb;
+    function prosesPakar() {
+        const bb = parseFloat(document.getElementById('inBB').value);
+        const tb = parseFloat(document.getElementById('inTB').value)/100;
+        const hb = parseFloat(document.getElementById('inHB').value);
+        const lila = parseFloat(document.getElementById('inLILA').value);
+        const asupan = parseInt(document.getElementById('inAsup').value);
         
-        let fs = ""; 
-        DB.logika_fisik_klinis.forEach((item, i) => {
-            fs += `<div class="col-6 small"><div class="form-check">
-                   <input class="form-check-input chk-fisik" type="checkbox" value="${item.gejala}" id="f${i}">
-                   <label class="form-check-label" for="f${i}" style="font-size:11px">${item.gejala}</label>
-                   </div></div>`;
-        });
-        document.getElementById('listFisik').innerHTML = fs;
-    }
-
-    async function prosesPES() {
-        const bb = parseFloat(document.getElementById('inBB').value), tb = parseFloat(document.getElementById('inTB').value)/100;
-        if(!bb || !tb) return notify("Lengkapi Antropometri!");
         const imt = bb / (tb * tb);
-        const jk = document.getElementById('jkP').value;
-        let codes = [], sBio = [], sFisik = [];
+        let diagnosaCodes = [];
 
-        document.querySelectorAll('.in-lab').forEach(input => {
-            const val = parseFloat(input.value);
-            if(!isNaN(val)) {
-                sBio.push(`${input.dataset.param}:${val}`);
-                DB.logika_biokimia.filter(r => r.parameter === input.dataset.param).forEach(rule => {
-                    let th = parseFloat(rule.ambang_batas.replace(/[^\d.]/g, ''));
-                    if(rule.ambang_batas.includes(">") && val > th) codes.push(rule.kode_diagnosa);
-                    if(rule.ambang_batas.includes("<") && val < th) codes.push(rule.kode_diagnosa);
-                });
-            }
-        });
-        document.querySelectorAll('.chk-fisik:checked').forEach(c => {
-            sFisik.push(c.value);
-            codes.push(DB.logika_fisik_klinis.find(x => x.gejala === c.value).kode_diagnosa);
-        });
+        // Logika Pakar Otomatis
+        if (hb < 12) diagnosaCodes.push("NC-2.2");
+        if (imt < 18.5 || lila < 23.5) diagnosaCodes.push("NC-3.1");
+        if (asupan < 80) diagnosaCodes.push("NI-5.1");
+        if (asupan > 110) diagnosaCodes.push("NI-1.5");
 
-        toggleLoad(true);
-        const finalCodes = [...new Set(codes)];
-        const params = new URLSearchParams({
-            action: "simpanHistory", nik: document.getElementById('inNIK').value, 
-            nama: document.getElementById('namaP').value, tgl: document.getElementById('tglP').value, 
-            jk: jk, visit: currentVisit, diagMedis: document.getElementById('diagP').value,
-            bb: bb, tb: document.getElementById('inTB').value, imt: imt.toFixed(1),
-            asupan: document.getElementById('inAsup').value, biokimia: sBio.join(", "),
-            fisik: sFisik.join(", "), pes: finalCodes.join(", "), ahli: currentNutritionist
-        });
-
-        try {
-            await fetch(`${SCRIPT_URL}?${params.toString()}`);
-            renderReport(imt, finalCodes, jk);
-        } catch(e) { notify("Gagal Simpan."); }
-        toggleLoad(false);
+        renderReport(imt, hb, lila, diagnosaCodes);
     }
 
-    function renderReport(imt, codes, jk) {
+    function renderReport(imt, hb, lila, codes) {
         document.getElementById('namaAhliGizi').innerText = currentNutritionist;
         document.getElementById('waktuCetak').innerText = new Date().toLocaleString('id-ID');
         document.getElementById('hasilDiagMedis').innerText = document.getElementById('diagP').value || "-";
-        document.getElementById('hasilPasien').innerHTML = `<b>NIK:</b> ${document.getElementById('inNIK').value} | <b>Nama:</b> ${document.getElementById('namaP').value}<br><b>JK:</b> ${jk} | <b>IMT:</b> ${imt.toFixed(1)}`;
-        let h = "";
-        codes.forEach(k => {
-            const p = DB.master_diagnosa_pes.find(x => x.kode === k);
-            if(p) h += `<div class="p-3 border-start border-4 border-success bg-white mb-2 small shadow-sm rounded-end"><b class="text-success">${p.kode}: ${p['problem (p)']}</b><p class="mb-0 x-small text-muted mt-1"><b>E:</b> ${p['etiologi (e)']} | <b>S:</b> ${p['signs_symptoms (s)']}</p></div>`;
+        
+        document.getElementById('hasilPasien').innerHTML = `
+            <b>Nama:</b> ${document.getElementById('namaP').value} | <b>NIK:</b> ${document.getElementById('inNIK').value}<br>
+            <b>IMT:</b> ${imt.toFixed(1)} | <b>Hb:</b> ${hb} g/dL | <b>LiLA:</b> ${lila} cm
+        `;
+
+        let htmlPES = "", htmlInt = "";
+        codes.forEach(c => {
+            const data = master_ncp.find(item => item.kode === c);
+            if(data) {
+                htmlPES += `<div class="p-3 border-start border-4 border-success bg-white mb-2 shadow-sm small">
+                    <b class="text-success">${data.kode}: ${data.p}</b><br>
+                    <small>E: ${data.e} | S: ${data.s}</small>
+                </div>`;
+                htmlInt += `<div class="mb-2 small"><b>• Untuk ${data.kode}:</b> ${data.intervensi}</div>`;
+            }
         });
-        document.getElementById('hasilPES').innerHTML = h || "Hasil Normal.";
+
+        document.getElementById('hasilPES').innerHTML = htmlPES || "Status Gizi Normal.";
+        document.getElementById('hasilIntervensi').innerHTML = htmlInt || "Lanjutkan pola makan gizi seimbang.";
         show('stepHasil');
     }
 
-    function saveAndPrint() {
-        document.title = "NCPofDA_" + (document.getElementById('namaP').value || "Pasien");
-        window.print();
+    function show(id) { 
+        document.querySelectorAll('.wizard-step').forEach(s => s.style.display="none"); 
+        document.getElementById(id).style.display="block"; 
+        window.scrollTo(0,0);
     }
-    function notify(msg) {
-        const box = document.getElementById('customAlert');
-        document.getElementById('alertMsg').innerText = msg;
-        box.style.display = 'block';
-        setTimeout(() => box.style.display = 'none', 3500);
-    }
-    function show(id) { document.querySelectorAll('.wizard-step').forEach(s => s.style.display="none"); document.getElementById(id).style.display="block"; window.scrollTo(0,0); }
-    function toggleLoad(s) { document.getElementById('loader').style.display=s?'flex':'none'; }
-    window.onbeforeunload = function() { if(document.getElementById('appBody').style.display === 'block') return "Data belum tersimpan!"; };
 </script>
 </body>
 </html>
