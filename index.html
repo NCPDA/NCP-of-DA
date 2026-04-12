@@ -9,10 +9,12 @@
     <style>
         :root { --teal-dark: #00695c; --orange: #ff9800; --bg-soft: #f8fbfb; }
         body { background: var(--bg-soft); font-family: 'Inter', sans-serif; color: #444; }
+        .login-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .login-card { max-width: 400px; width: 100%; background: white; border-radius: 25px; padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); text-align: center; }
         .wizard-step { display: none; background: white; border-radius: 25px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; animation: fadeIn 0.4s ease; }
-        .input-custom { background: #f1f5f4 !important; border: none !important; border-radius: 12px !important; padding: 10px 15px !important; font-size: 0.9rem; }
+        .input-custom { background: #f1f5f4 !important; border: none !important; border-radius: 12px !important; padding: 12px 15px !important; font-size: 0.9rem; }
         .section-title { font-weight: 800; color: var(--teal-dark); border-left: 5px solid var(--orange); padding-left: 12px; margin-bottom: 20px; }
-        .history-card { cursor: pointer; transition: 0.3s; border: 1px solid #eee; background: white; border-radius: 15px; }
+        .history-card { cursor: pointer; transition: 0.3s; border: 1px solid #eee; background: white; border-radius: 15px; margin-bottom: 10px; padding: 15px; }
         .history-card:hover { background: #f0f7f6; border-color: var(--teal-dark); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @media print { .no-print { display: none !important; } .wizard-step { box-shadow: none; padding: 0; } }
@@ -21,28 +23,44 @@
 <body>
 
 <div class="container py-4">
-    <div id="appBody" style="max-width: 850px; margin: auto;">
+
+    <div id="stepLogin" class="login-wrapper">
+        <div class="login-card">
+            <h2 class="fw-bold text-teal-dark mb-2">NCP <span>of DA</span></h2>
+            <p class="small text-muted mb-4">Sistem Pakar Asuhan Gizi Terstandar</p>
+            <input type="text" id="user" class="form-control input-custom mb-2" placeholder="Username">
+            <input type="password" id="pass" class="form-control input-custom mb-4" placeholder="Password">
+            <button onclick="doLogin()" class="btn btn-dark w-100 py-3 rounded-pill fw-bold">MASUK</button>
+        </div>
+    </div>
+
+    <div id="appBody" style="display:none; max-width: 850px; margin: auto;">
         
+        <div class="mb-3 text-end no-print">
+            <span class="small text-muted me-3"><i class="bi bi-person-circle"></i> <strong id="userNameDisplay"></strong></span>
+            <button onclick="location.reload()" class="btn btn-sm btn-outline-danger border-0">Logout</button>
+        </div>
+
         <div id="stepPasien" class="wizard-step" style="display:block;">
-            <h4 class="section-title">Rekam Medis & Riwayat Kunjungan</h4>
+            <h4 class="section-title">Rekam Medis Pasien</h4>
             <div class="input-group mb-4">
-                <input type="text" id="inNIK" class="form-control input-custom rounded-start-pill" placeholder="Masukkan NIK Pasien (Contoh: 123)">
+                <input type="text" id="inNIK" class="form-control input-custom rounded-start-pill" placeholder="Masukkan NIK Pasien (Cth: 123)">
                 <button onclick="cariPasien()" class="btn btn-dark rounded-end-pill px-4">CARI</button>
             </div>
 
             <div id="areaHistory" style="display:none;">
-                <h6 class="fw-bold mb-3 text-teal-dark"><i class="bi bi-clock-history"></i> Riwayat Pemeriksaan Terdaftar:</h6>
-                <div id="listHistory" class="mb-4"></div>
-                <button onclick="kunjunganBaru()" class="btn btn-orange w-100 rounded-pill mb-3 fw-bold text-white" style="background: var(--orange);">+ BUAT PEMERIKSAAN BARU</button>
+                <h6 class="fw-bold mb-3"><i class="bi bi-clock-history"></i> Riwayat Kunjungan:</h6>
+                <div id="listHistory"></div>
+                <button onclick="kunjunganBaru()" class="btn btn-warning w-100 rounded-pill mt-3 fw-bold">BUAT PEMERIKSAAN BARU</button>
             </div>
 
             <div id="formPasienBaru" style="display:none;">
-                <div class="alert alert-warning py-2 small">NIK tidak ditemukan. Silakan registrasi pasien baru:</div>
+                <div class="alert alert-info small">NIK tidak ditemukan. Daftarkan pasien baru:</div>
                 <div class="row g-2">
                     <div class="col-12"><input type="text" id="namaP" class="form-control input-custom" placeholder="Nama Lengkap"></div>
                     <div class="col-6"><input type="date" id="tglP" class="form-control input-custom"></div>
                     <div class="col-6"><select id="jkP" class="form-select input-custom"><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></div>
-                    <button onclick="kunjunganBaru()" class="btn btn-dark w-100 mt-3 rounded-pill">MULAI PEMERIKSAAN PERTAMA</button>
+                    <button onclick="kunjunganBaru()" class="btn btn-dark w-100 mt-3 rounded-pill">MULAI PEMERIKSAAN</button>
                 </div>
             </div>
         </div>
@@ -52,13 +70,13 @@
             <div id="infoPasienAktif" class="small mb-4 text-muted border-bottom pb-2"></div>
             
             <div class="row g-2 mb-3">
-                <div class="col-12"><textarea id="diagP" class="form-control input-custom" placeholder="Diagnosa Medis Dokter (DM, Gout, dll)" rows="2"></textarea></div>
+                <div class="col-12"><textarea id="diagP" class="form-control input-custom" placeholder="Diagnosa Medis Dokter" rows="2"></textarea></div>
                 <div class="col-4"><label class="small fw-bold">BB (kg)</label><input type="number" id="inBB" class="form-control input-custom"></div>
                 <div class="col-4"><label class="small fw-bold">TB (cm)</label><input type="number" id="inTB" class="form-control input-custom"></div>
                 <div class="col-4"><label class="small fw-bold">LiLA (cm)</label><input type="number" id="inLILA" class="form-control input-custom"></div>
             </div>
 
-            <h6 class="fw-bold text-muted border-bottom pb-2 mb-3">Data Laboratorium (Biokimia)</h6>
+            <h6 class="fw-bold text-muted border-bottom pb-2 mb-3">Laboratorium (Biokimia)</h6>
             <div class="row row-cols-2 row-cols-md-4 g-2 mb-4">
                 <div class="col"><label class="x-small fw-bold">GDS (mg/dL)</label><input type="number" id="inGula" class="form-control input-custom"></div>
                 <div class="col"><label class="x-small fw-bold">Asam Urat</label><input type="number" id="inUrat" class="form-control input-custom"></div>
@@ -66,11 +84,11 @@
                 <div class="col"><label class="x-small fw-bold">Kolesterol</label><input type="number" id="inKol" class="form-control input-custom"></div>
             </div>
 
-            <div class="col-12"><label class="small fw-bold">Estimasi Asupan: <span id="valAsup">100</span>%</label>
+            <div class="col-12 mb-4"><label class="small fw-bold">Estimasi Asupan: <span id="valAsup">100</span>%</label>
                 <input type="range" id="inAsup" class="form-range" min="0" max="150" value="100" oninput="document.getElementById('valAsup').innerText=this.value">
             </div>
 
-            <button onclick="prosesPakar()" class="btn btn-success w-100 mt-4 py-3 rounded-pill fw-bold">SIMPAN & ANALISIS NCP</button>
+            <button onclick="prosesPakar()" class="btn btn-success w-100 py-3 rounded-pill fw-bold">SIMPAN & ANALISIS</button>
         </div>
 
         <div id="stepHasil" class="wizard-step">
@@ -79,26 +97,18 @@
                     <h5 class="fw-bold mb-0">NUTRITION CARE PROCESS REPORT</h5>
                     <small id="labelVisit" class="text-uppercase fw-bold text-muted"></small>
                 </center>
-                
                 <div id="hasilPasien" class="p-3 bg-light border rounded small mb-3"></div>
-                
-                <div class="p-2 border-start border-4 border-primary bg-light mb-3">
-                    <h6 class="fw-bold mb-0 small text-primary">DIAGNOSA MEDIS:</h6>
-                    <p id="hasilDiagMedis" class="mb-0 small fw-bold"></p>
-                </div>
-
-                <h6 class="fw-bold border-bottom pb-2">DIAGNOSA GIZI (PES) - IDNT 2008</h6>
+                <div class="p-2 border-start border-4 border-primary bg-light mb-3"><h6 class="fw-bold mb-0 small text-primary">DIAGNOSA MEDIS:</h6><p id="hasilDiagMedis" class="mb-0 small fw-bold"></p></div>
+                <h6 class="fw-bold border-bottom pb-2">DIAGNOSA GIZI (PES)</h6>
                 <div id="hasilPES" class="mb-3"></div>
-
                 <h6 class="fw-bold border-bottom pb-2">INTERVENSI GIZI</h6>
                 <div id="hasilIntervensi" class="mb-4"></div>
-                
                 <div class="row mt-5 small">
                     <div class="col-6">Dicetak pada: <br><strong id="waktuCetak"></strong></div>
                     <div class="col-6 text-end">Dietisien,<br><br><br><strong>( Dian Agnesia, S.Gz., M.PH )</strong></div>
                 </div>
             </div>
-            <button onclick="cetakLaporan()" class="btn btn-primary w-100 mt-4 py-3 no-print rounded-pill shadow">SIMPAN / CETAK LAPORAN</button>
+            <button onclick="cetakLaporan()" class="btn btn-primary w-100 mt-4 py-3 no-print rounded-pill shadow">CETAK LAPORAN</button>
             <button onclick="location.reload()" class="btn btn-link w-100 mt-2 text-muted no-print text-decoration-none small">Kembali ke Pencarian</button>
         </div>
     </div>
@@ -106,33 +116,40 @@
 
 <script>
     // ==========================================
-    // 1. MASUKKAN URL GOOGLE SCRIPT DI SINI
+    // BARIS 137: MASUKKAN URL GOOGLE SCRIPT DI SINI
     // ==========================================
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqyBMMf-VI4UifjDzXH1OEdPu9qrXmqv1WtTtI8CmNqxeQkg1KfF5PzgXTjutkytQ/exec"; 
 
-    // Database PES & Intervensi (IDNT 2008 / NCP Publication)
     const master_ncp = {
         "NC-2.2_HB": { p: "Perubahan nilai lab terkait gizi (Anemia)", e: "Asupan mikronutrien tidak adekuat", s: "Hb rendah", int: "Diet tinggi Fe (Heme), edukasi suplemen zat besi." },
         "NC-2.2_GULA": { p: "Perubahan nilai lab terkait gizi (Hiperglikemia)", e: "Asupan karbohidrat berlebih", s: "GDS > 200 mg/dL", int: "Diet DM (3J), kontrol porsi karbohidrat." },
         "NC-2.2_URAT": { p: "Perubahan nilai lab terkait gizi (Hiperurisemia)", e: "Asupan purin berlebih", s: "Asam urat tinggi", int: "Diet rendah purin, edukasi hidrasi." },
         "NC-3.1": { p: "Berat badan kurang / Risiko KEK", e: "Asupan energi tidak adekuat", s: "IMT rendah / LiLA < 23,5 cm", int: "Diet TETP, pemberian makanan tambahan." },
-        "NI-5.1": { p: "Asupan mikronutrien tidak adekuat", e: "Kurang paparan informasi gizi", s: "Asupan < 80%", int: "Edukasi keberagaman pangan (Isi Piringku)." }
+        "NI-5.1": { p: "Asupan mikronutrien tidak adekuat", e: "Kurang informasi gizi", s: "Asupan < 80%", int: "Edukasi keberagaman pangan (Isi Piringku)." }
     };
 
     let historyPasien = []; 
     let dataAktif = { nik: "", nama: "", tgl: "", jk: "" };
 
+    function doLogin() {
+        const u = document.getElementById('user').value;
+        const p = document.getElementById('pass').value;
+        if(u && p) { // Simulasi login
+            document.getElementById('userNameDisplay').innerText = u;
+            document.getElementById('stepLogin').style.display = 'none';
+            document.getElementById('appBody').style.display = 'block';
+        } else {
+            alert("Masukkan Username & Password!");
+        }
+    }
+
     async function cariPasien() {
         const nik = document.getElementById('inNIK').value;
-        if(!nik) return alert("Masukkan NIK!");
-        
-        // Contoh Logika Dummy (Nanti diganti fungsi fetch ke SCRIPT_URL)
+        if(!nik) return;
+        // Simulasi jika NIK "123" ditemukan
         if(nik === "123") {
             dataAktif = { nik: "123", nama: "Miranda S. Samodara", tgl: "2007-05-20", jk: "Perempuan" };
-            historyPasien = [
-                { tgl: "03/10/2025", visit: 1, diagnosa: "Anemia", imt: 17.5, hb: 10.5, pes: ["NC-2.2_HB", "NC-3.1"] },
-                { tgl: "30/10/2025", visit: 2, diagnosa: "Mulai Membaik", imt: 18.2, hb: 11.2, pes: ["NC-2.2_HB"] }
-            ];
+            historyPasien = [{ tgl: "03/10/2025", visit: 1, diagnosa: "Anemia", imt: 17.5, hb: 10.5, pes: ["NC-2.2_HB", "NC-3.1"] }];
             renderHistory();
         } else {
             document.getElementById('areaHistory').style.display = 'none';
@@ -143,15 +160,9 @@
     function renderHistory() {
         let h = "";
         historyPasien.forEach((v, i) => {
-            h += `<div class="p-3 mb-2 history-card shadow-sm" onclick="reprintVisit(${i})">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <span class="badge bg-secondary mb-1">KUNJUNGAN #${v.visit}</span>
-                            <div class="fw-bold">${v.tgl}</div>
-                        </div>
-                        <i class="bi bi-chevron-right text-muted"></i>
-                    </div>
-                    <div class="x-small text-muted mt-1">Hb: ${v.hb} | IMT: ${v.imt} | PES: ${v.pes.join(', ')}</div>
+            h += `<div class="history-card shadow-sm" onclick="reprintVisit(${i})">
+                    <div class="d-flex justify-content-between"><strong>KUNJUNGAN #${v.visit}</strong><span>${v.tgl}</span></div>
+                    <small class="text-muted">Hb: ${v.hb} | IMT: ${v.imt}</small>
                   </div>`;
         });
         document.getElementById('listHistory').innerHTML = h;
@@ -164,8 +175,7 @@
             dataAktif.nama = document.getElementById('namaP').value;
             dataAktif.nik = document.getElementById('inNIK').value;
         }
-        document.getElementById('infoPasienAktif').innerHTML = `
-            <i class="bi bi-person-fill"></i> <b>${dataAktif.nama}</b> | NIK: ${dataAktif.nik} | <span class="badge bg-warning text-dark">Pemeriksaan Baru</span>`;
+        document.getElementById('infoPasienAktif').innerHTML = `<b>${dataAktif.nama}</b> | NIK: ${dataAktif.nik}`;
         show('stepAssess');
     }
 
@@ -176,20 +186,14 @@
     }
 
     function prosesPakar() {
-        const bb = parseFloat(document.getElementById('inBB').value);
-        const tb = parseFloat(document.getElementById('inTB').value)/100;
-        const imt = bb / (tb * tb);
-        const hb = parseFloat(document.getElementById('inHB').value);
-        const gula = parseFloat(document.getElementById('inGula').value);
-        const lila = parseFloat(document.getElementById('inLILA').value);
-        const asup = parseInt(document.getElementById('inAsup').value);
-
+        const bb = parseFloat(document.getElementById('inBB').value), tb = parseFloat(document.getElementById('inTB').value)/100;
+        const imt = bb / (tb * tb), hb = parseFloat(document.getElementById('inHB').value);
+        const gula = parseFloat(document.getElementById('inGula').value), lila = parseFloat(document.getElementById('inLILA').value), asup = parseInt(document.getElementById('inAsup').value);
         let diagCodes = [];
         if(hb < 12) diagCodes.push("NC-2.2_HB");
         if(gula > 200) diagCodes.push("NC-2.2_GULA");
         if(imt < 18.5 || lila < 23.5) diagCodes.push("NC-3.1");
         if(asup < 80) diagCodes.push("NI-5.1");
-
         document.getElementById('labelVisit').innerText = `KUNJUNGAN #${historyPasien.length + 1}`;
         renderReport(imt, hb, lila, diagCodes);
     }
@@ -197,22 +201,17 @@
     function renderReport(imt, hb, lila, codes) {
         document.getElementById('waktuCetak').innerText = new Date().toLocaleString('id-ID');
         document.getElementById('hasilDiagMedis').innerText = document.getElementById('diagP').value || "-";
-        document.getElementById('hasilPasien').innerHTML = `
-            <div class="row">
-                <div class="col-6"><b>Nama:</b> ${dataAktif.nama}<br><b>NIK:</b> ${dataAktif.nik}</div>
-                <div class="col-6 text-end"><b>IMT:</b> ${imt.toFixed(1)}<br><b>Hb:</b> ${hb || '-'} | <b>LiLA:</b> ${lila || '-'}</div>
-            </div>`;
-
+        document.getElementById('hasilPasien').innerHTML = `<b>Nama:</b> ${dataAktif.nama} | <b>NIK:</b> ${dataAktif.nik}<br><b>Analisis:</b> IMT ${imt.toFixed(1)} | Hb ${hb || '-'} | LiLA ${lila || '-'}`;
         let pes = "", intv = "";
         codes.forEach(c => {
             const d = master_ncp[c];
             if(d) {
-                pes += `<div class="p-2 border-start border-4 border-success bg-white mb-2 small shadow-sm"><b>${c.split('_')[0]}: ${d.p}</b><br><span class="text-muted">E: ${d.e} | S: ${d.s}</span></div>`;
-                intv += `<div class="small mb-1">• <b>Untuk ${c.split('_')[0]}:</b> ${d.int}</div>`;
+                pes += `<div class="p-2 border-start border-4 border-success bg-white mb-2 small shadow-sm"><b>${d.p}</b><br>E: ${d.e}</div>`;
+                intv += `<div class="small mb-1">• ${d.int}</div>`;
             }
         });
-        document.getElementById('hasilPES').innerHTML = pes || "Status gizi dan biokimia dalam batas normal.";
-        document.getElementById('hasilIntervensi').innerHTML = intv || "Pertahankan pola asupan gizi seimbang.";
+        document.getElementById('hasilPES').innerHTML = pes || "Normal.";
+        document.getElementById('hasilIntervensi').innerHTML = intv || "Edukasi Gizi Seimbang.";
         show('stepHasil');
     }
 
